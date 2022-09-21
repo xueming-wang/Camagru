@@ -1,0 +1,40 @@
+<!-- 登陆页面page login in with <form> and (header, footer)-->
+
+
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8">
+			<title>Camagru</title>
+			<link rel="stylesheet" href="../public/css/login.css" type="text/css"/>
+		</head>
+	
+		<!-- 可见的页面内容 -->
+		<body>
+			<div>
+				<header>
+					<div>
+						<a>Camagru</a>
+						登陆页面
+					</div>
+				</header>
+				<main>
+					<div>
+						<form  id='login-form' class="formule" action="" formenctype="multipart/form-data">
+							<p>your username</p>
+							<p><input id='username' type="test" value="username"></p>
+		
+							<p>your password</p>
+							<p><input id='password' type="test" value="password"></p>
+							
+							<button onclick="handleLogin(event)">submit</button>
+						</form>
+					</div>
+				</main>
+				<footer>
+					This is footer.
+				</footer>
+			</div>
+		</body>
+		<script type="text/javascript" src="../../public/view_js/login.js"></script>
+	</html>

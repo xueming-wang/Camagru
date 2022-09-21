@@ -1,0 +1,43 @@
+<!-- 注册页面 -->
+
+<!-- homepage: before login in login signup 和数据库图片 -->
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Camagru</title>
+		<link rel="stylesheet" href="../public/css/signup.css" type="text/css"/>
+	</head>
+
+	<!-- 可见的页面内容 -->
+	<body>
+		<div>
+			<header>
+				<div>
+					<p>sign up</p>
+				</div>
+			</header>
+			<main>
+				<div>
+					<form  id='signup-form' class="formule" action="" formenctype="multipart/form-data">
+						<p>entre your Username(5~10size, a~z, A~Z)</p>
+						<p><input id='username' type="test" value="username"></p>
+	
+						<p>entre your Email</p>
+						<p><input id='email' type="test" value="email"></p>
+
+						<p>entre your PassWord(5~15size, a~z, A~Z, 0~9))</p>
+						<p><input id='password' type="test" value="password"></p>
+						
+						<button type="submit" onclick="handleSubmit(event)">submit</button>
+					</form>
+				</div>
+			</main>
+			<footer>
+				This is footer.
+			</footer>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../public/view_js/signup.js"></script>
+</html>
