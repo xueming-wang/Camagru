@@ -51,10 +51,9 @@ router.post('/api/usercreate', function (req: Request,res: Response,done:any) {
 	if (req.body.username && req.body.password && req.body.email) {
 		createUserToDB(req.body.username, req.body.password, req.body.email, done);
 		sendMail(req.body.email);
-		
 		const token = generateAccessToken({ username: req.body.username });
   		res.json(token);
-
+		
 		console.log("signup success");
 	} else {
 		console.log("signup error");

@@ -62,7 +62,12 @@ console.log(`Server running at http://localhost:${port}...`);
 
 
 
-
+/*用户使用用户名密码来请求服务器
+服务器进行验证用户的信息
+服务器通过验证发送给用户一个token
+客户端存储token，并在每次请求时附送上这个token值
+服务端验证token值，并返回数据
+*/
 //https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
 
 

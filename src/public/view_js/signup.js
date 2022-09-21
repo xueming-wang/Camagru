@@ -53,6 +53,7 @@ function handleSubmit(event){
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
+			token:'' ,
 		},
 		body: JSON.stringify(user),
 	})
