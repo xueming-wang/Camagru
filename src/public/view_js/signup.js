@@ -25,7 +25,7 @@ function passwordConfirmation(password) {
 
 function handleSubmit(event){
 	//取消默认事件
-	console.log('!!!!!!!!!!!!!!!!');
+	console.log('sign up button!!!!!!!!!!!!!!!!');
 	event.preventDefault();
 
 	// const form = document.getElementById('signup-form');

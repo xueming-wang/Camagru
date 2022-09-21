@@ -13,6 +13,12 @@ const Users = require('./public/user');
 //创建express实例
 const app: Express = express();
 
+const jwt = require('jsonwebtoken');
+require('crypto').randomBytes(64).toString('hex')
+
+export function generateAccessToken(username:any) {
+    return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+}
 //dotenv
 require('dotenv').config();
 
@@ -57,6 +63,7 @@ console.log(`Server running at http://localhost:${port}...`);
 
 
 
+//https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
 
 
 

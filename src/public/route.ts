@@ -1,6 +1,7 @@
 import express, { Router, Response, Request } from "express"
 import { User, createUserToDB , findUserByName,  UpdateUserName} from "./user";
 import { sendMail } from "./service/mail_serv";
+import { generateAccessToken } from '../index';
 
 export const router: Router = express.Router();
 router.use(express.json());
@@ -45,12 +46,15 @@ router.get('/profil', function (_req: Request, res: Response) {
 // });
 
 ///User:create new user
-router.post('/api/usercreate', function (req: Request,_res: Response,done:any) {
+router.post('/api/usercreate', function (req: Request,res: Response,done:any) {
 	
 	if (req.body.username && req.body.password && req.body.email) {
 		createUserToDB(req.body.username, req.body.password, req.body.email, done);
 		sendMail(req.body.email);
 		
+		const token = generateAccessToken({ username: req.body.username });
+  		res.json(token);
+
 		console.log("signup success");
 	} else {
 		console.log("signup error");
@@ -63,10 +67,22 @@ router.put('/api/userupdate/:username', function (user:User,  req:Request, done:
 });
 
 //post /api/login
-router.post('/api/login', function (_req: Request, _res: Response, _done:any) {
-	
+router.post('/api/login', function (req: Request, res: Response, done:any) {
+	console.log("come in~~~~~~~~~~~~~~~~~~~~~~~~");
+	const { username, password } = req.body;
+	if (!username || !password ) {
+		res.send({})
+		return ;
+	}
+	try {
+		const user = findUserByName(username, done) as unknown as User;
+		if (!user || user.password != password) 
+			res.send({});
+		
+	} catch (error){
+		res.send({})
+	}
 });
-
 
 //get请求 从网站根目录访问localhost:3000/
 // router.get('/profile/:id/:name', function(req: Request, res: Response) {

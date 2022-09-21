@@ -21,7 +21,7 @@
  const transporter = nodemailer.createTransport(config)
 
  //  发送邮件 调用transporter.sendMail(mail, callback)
-export function sendMail (to: string) {
+export async function sendMail (to: string) {
 	 console.log("-------in sendMail-------")
 	 //创建一个收件人对象
 	 const mail = {
