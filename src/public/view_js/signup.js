@@ -61,10 +61,9 @@ async function handleSubmit(event){
 		if (!response) {
 			throw new Error(`Error! status: ${response.status}`);
 		}
-	
-		const result = await response;
+		const token = await response;
+		document.cookie = `token=${token}`; //设置ookie
 		window.location='/login' //跳转到登录页面
-		return result;
 	} catch (error) {
 		console.log(error);
 	}

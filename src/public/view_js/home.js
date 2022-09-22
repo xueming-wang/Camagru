@@ -1,5 +1,7 @@
 const galleryParent = document.getElementById("Gallery");
 
+// if (isLogin) {}
+
 // const imgs = getImages()
 // // 从数据库中获取图片
 // async function getImages() { 

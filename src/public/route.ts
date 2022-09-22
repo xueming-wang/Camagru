@@ -56,12 +56,12 @@ router.post('/api/createNewUser', function (req: Request,res: Response,done:any)
 		// sent back from a request to sign in or log in 
 		//返回一个令牌，用于验证用户身份
 		const token = generateAccessToken({ username: req.body.username });
-  		res.json(token);
+  		res.send({ token });
 		// set token in cookie
 		document.cookie = `token=${token}`
-		console.log("signup success");
+		res.send({})
 	} else {
-		console.log("signup error");
+		res.send({})
 	}
 });
 
@@ -71,7 +71,7 @@ router.put('/api/userupdate/:username', authenticateToken, function (user:User, 
 });
 
 //post /api/login
-router.post('/api/login', authenticateToken, function (req: Request, res: Response, done:any) {
+router.post('/api/login', function (req: Request, res: Response, done:any) {
 	console.log("come in~~~~~~~~~~~~~~~~~~~~~~~~");
 	const { username, password } = req.body;
 	if (!username || !password ) {
@@ -80,9 +80,12 @@ router.post('/api/login', authenticateToken, function (req: Request, res: Respon
 	}
 	try {
 		const user = findUserByName(username, done) as unknown as User;
-		if (!user || user.password != password) 
+		if (!user || user.password != password) {
 			res.send({});
-		
+			return;
+		}
+		const token = generateAccessToken({ username: req.body.username });
+    	res.send({ token });
 	} catch (error){
 		res.send({})
 	}
