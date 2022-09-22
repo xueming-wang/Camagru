@@ -1,3 +1,4 @@
+import { response } from "express"
 
 //引入模块 nodemailer
  const nodemailer = require('nodemailer')
@@ -40,7 +41,8 @@ export function sendMail (to: string) {
 		 if (error) {
 			 return console.log(error)
 		 }
-		 transporter.close()
+		 transporter.close();
+		 
 		 console.log('Message sent: %s', info.messageId)
 	 })
 }
