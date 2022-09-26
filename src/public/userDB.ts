@@ -10,7 +10,8 @@ export interface User {
   password: string;
   email: string;
   userId: string;
-  imgs: string[];
+  active: boolean;
+  imgs: [{type: object}];
 }
 
 var User:any = new schema ({
@@ -18,78 +19,106 @@ var User:any = new schema ({
 	passWord: '',
 	email: '',
 	userId: '',
-	imgs: [{data:'', img: '', Comment: ''}],
+	active: false,
+	imgs: [{data:'', path: '', comment: ''}],
 });
 
+//user model
 const userModel = mongoose.model('user', User)
+
+module.exports = userModel;
+
 // /** 3) Create and Save a Person */
 // //成功时调用 done(null, data)，在失败时调用 done(err)。
-export const createUserToDB = function(userName: string, password: string, email: string, done: any) {
-	// const userModel = mongoose.model('user', User)
+export const createUserToDB = function(userName: string, password: string, email: string) {
 	const newUser = new userModel({userName: userName, password: password, email: email})
-	.save(function(err:any, data:any) {
-  	if (err) return; console.log(err);
-		// newUser.save();
-	done(null, data)
-  });
+	//save data
+	.save(function(err:any) {
+  		if (err) {
+			console.log(err);
+			return ;
+		}
+  	});
 };
 
 
-// /** 5) Use `Model.find()` */
-export const findUserByName = (userName:any, done:any) => {
-	userModel.find({userName: userName}, function(err:any, data:any) {
-     if (err) return; console.log(err);
-     done(null, data);
-  });
+/** 5) Use `Model.find()` */
+export const findUserByName = (username:any) => {
+	userModel.find({username}, function(err:any, doc:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		return doc ;
+		//returns array docs
+	})
 };
 
 // /** 7) Use `Model.findById()` */
-export  const findUserById = (userId:any, done:any) => {
-   userModel.findById(userId, function(err:any, data:any) {
-  if (err) return; console.log(err);
-  	done(null, data);
+export  const findUserById = (obj_id:any) => {
+   userModel.findById(obj_id, function(err:any) {
+  	if (err) return; console.log(err);
   })
 };
 
 // /** 8) Classic Info Update : edit userName */
-export  const UpdateUserName = (user:User , userId:any, done:any) => {
-	userModel.findById(userId, function(err:any, data:any) {
-	  if (err) return; console.log(err);
-	  data.username = user.userName;
-	  data.email = user.email;
-	  data.password = user.password;
+export const UpdateUserName = (username:any, newname:any) => {
+	var whereuser = { 'userName': username };
+	var updatename = { 'userName': newname };
 
-	  data.save(function(err:any, data:any) {
-		  if (err) return; console.log(err);
-		  done(null, data);
-	  })
+	userModel.update(whereuser, updatename, function(err:any, res:Response) {
+		if (err) { 
+			console.log(err);
+			return ;
+		} else {
+			return res.json();
+		}
 	})
 };
 
 
 // // /** 8) Classic Info Update : Find, edit Email */
-// export const UpdateUserEmail = (email:String , userId:any, done:any) => {
-// 	User.findById(userId, function(err:any, data:any) {
-// 		if (err) return; console.log(err);
-// 		data.email = email;
-// 		data.save(function(err:any, data:any) {
-// 			if (err) return; console.log(err);
-// 			done(null, data);
-// 		})
-// 	})
-// };
+export const UpdateEmail = (username:any, newemail:any) => {
+	var whereuser = { 'username': username };
+	var updateEmail = { 'email': newemail };
+
+	userModel.update(whereuser, updateEmail, function(err:any, res:Response) {
+		if (err) { 
+			console.log(err);
+			return ;
+		} else {
+			return res.json();
+		}
+	})
+};
 
 //  // /** 8) Classic Info Update : Find, edit PassWord */
-//  export const UpdateUserPassWord = (PassWord:String , userId:any, done:any) => {
-// 	User.findById(userId, function(err:any, data:any) {
-// 		if (err) return; console.log(err);
-// 		data.PassWord = PassWord;
-// 		data.save(function(err:any, data:any) {
-// 			if (err) return; console.log(err);
-// 			done(null, data);
-//  		})
-// 	})
-// };
+export const UpdatePassWord = (username:any, newpassword:any) => {
+	var whereuser = { 'username': username };
+	var updatePassWord = { 'password': newpassword };
+
+	userModel.update(whereuser, updatePassWord, function(err:any, res:Response) {
+		if (err) { 
+			console.log(err);
+			return ;
+		} else {
+			return res.json();
+		}
+	})
+};
+
+
+export const deleUser = (username:any) => {
+	var whereuser = { 'username':username };
+	userModel.remove(whereuser, function(err: any, res: Response) {
+		if (err) {
+			console.log(err);
+		} else {
+			console.log(res);
+		}
+	})
+};
+
 
 // /** 9 add img, then Save **/
 export  const Addimg = (img:string, userId:any, done:any) => {
@@ -105,25 +134,20 @@ export  const Addimg = (img:string, userId:any, done:any) => {
   })
 };
 
-// /** model.findOneAndUpdate() **/
-export const Deleteimg = (img:string, userId:any, done:any) => {
-	userModel.findById(userId, function(err:any, userModel:any) {
-		if (err) return ;
-		userModel.img.pull({img: img}); //pull img from array
-		userModel.save(function(err:any, updata:any) {
-			if (err) return ;
-			done(null, updata)
-		})
-	})
-};
 
-// /** model.findByIdAndRemove **/
-const removeUserById = (userId:any, done:any) => {
-	userModel.findByIdAndRemove(userId, (err:any, data:any) => {
-    if (err) return ;
-    done(null, data);
-  }) 
-};
+
+
+// /** model.findOneAndUpdate() **/
+// export const Deleteimg = (img:string, userId:any, done:any) => {
+// 	userModel.findById(userId, function(err:any, userModel:any) {
+// 		if (err) return ;
+// 		userModel.img.pull({img: img}); //pull img from array
+// 		userModel.save(function(err:any, updata:any) {
+// 			if (err) return ;
+// 			done(null, updata)
+// 		})
+// 	})
+// };
 
 // /** addComment to img */
 // const addComment = (img:string, userId:any, comment:string) => {

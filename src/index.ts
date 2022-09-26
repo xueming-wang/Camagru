@@ -1,14 +1,14 @@
 import express, { Express, Request, Response } from "express";
 import { router } from "./public/route";
 import './public/mongodb';
-import './public/user';
+import './public/userDB';
 
 //引入mongodb模块
 const mongoose = require('mongoose');
 
 const path = require("path");
 //运行user.ts页面里所有的代码
-const Users = require('./public/user');
+const Users = require('./public/userDB');
 
 //创建express实例
 const app: Express = express();
@@ -16,7 +16,7 @@ const app: Express = express();
 const jwt = require('jsonwebtoken');
 require('crypto').randomBytes(64).toString('hex')
 
-export function generateAccessToken(username:any) {
+const generateAccessToken = (username:any) => {
     return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
 }
 //dotenv

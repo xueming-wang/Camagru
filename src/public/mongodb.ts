@@ -6,18 +6,22 @@ const url = process.env['MONGO_URL'];
 
 // //连接database
 mongoose.connect(url, 
-	{ useNewUrlParser: true, useUnifiedTopology: true});
+	{ useNewUrlParser: true, useUnifiedTopology: true}
+);
 
-mongoose.connection.on('error', function(err:any) {
-	console.log('数据库连接失败', err);
+// 让 mongoose 使用全局 Promise 库
+mongoose.Promise = global.Promise;
+
+mongoose. connection.on('error', function(err:any) {
+	console.log('Mongoose connection error: ', err);
 });
 
 mongoose.connection.on('connected', function() {
-	console.log('数据库连接成功!!!!');
+	console.log('Mongoose connected');
 });
 
 mongoose.connection.on('disconnected', function() {
-	console.log('数据库断开连接');
+	console.log('Mongoose disconnected');
 });
 
 module.exports = mongoose;
