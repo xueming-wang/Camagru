@@ -1,4 +1,3 @@
-
 const dotenv = require('dotenv');
 require("dotenv").config();
 
@@ -37,6 +36,11 @@ export function generateAccessToken(username:any) {
 export function authenticateToken(req:any , res:any, next:any) {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
+
+  // front: authorisation: Bearer TOKEN
+  // so split with space ' '
+  // => ['Bearer', 'TOKEN']
+  // [1]: TOKEN
 
   if (token == null) return res.sendStatus(401)
 

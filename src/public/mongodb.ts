@@ -12,7 +12,7 @@ mongoose.connect(url,
 // 让 mongoose 使用全局 Promise 库
 mongoose.Promise = global.Promise;
 
-mongoose. connection.on('error', function(err:any) {
+mongoose.connection.on('error', function(err:any) {
 	console.log('Mongoose connection error: ', err);
 });
 

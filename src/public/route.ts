@@ -1,8 +1,10 @@
+
 import express, { Router, Response, Request } from "express"
-import { User, createUserToDB ,  UpdateUserName, findUserByName, findUserById} from "./userDB";
+import { User, createUserToDB , findUserByName } from "./userDB";
 import { sendMail } from "./service/mail_serv";
 import { generateAccessToken } from './service/auth_serv';
-import { authenticateToken } from './service/auth_serv';
+import { setCookie,  getCookie, checkCookie } from './service/cookie';
+// import { authenticateToken } from './service/auth_serv';
 
 
 export const router: Router = express.Router();
@@ -39,71 +41,79 @@ router.get('/profil', function (_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/profilPage.html");
 });
 
-///User:create new user  !!!!!!!!!problem!!!!!!!!!
+///User:create new user  
 router.post('/api/createNewUser', function (req: Request,res: Response) {
-	const { username, email, password }  = req.body;
+	const username = req.body.username;
+	const password = req.body.password;
+	const email = req.body.email;
 
 	if (!username || !password || !email)
 		 res.send({});
-	try {
-		const user = findUserByName(username) as unknown as User;
-		if (!user) res.send({});
-
-		const activetoken:any = generateAccessToken(username);
-		createUserToDB(username, password, email);
-		
-		sendMail(email, `click this link: "http://localhost:3000"/verify?token=${activetoken}`);
-		res.send ({
-			"token": true,
-			"email": email
-		});
-	
-	}catch(e) {
+	console.log('username:' + username);
+	const user:any = findUserByName(username);
+	if (user) {
+		console.log("user already exist");
 		res.send({});
+		return;
 	}
+	try {
+		createUserToDB(username, password, email);
+	}catch(e) {
+		console.log('什么鬼?????????????');
+		console.log(e);
+		res.send({});
+	 }
 		
 });
 
 //email verify
-router.post('/api/active',  function (req: Request, res: Response) {
-	console.log("come in active api");
-	// var token = req.query; //get token
-	// try {
-	// 	const user:any = findUserByName(username);
-	// 	if (!user) {
-	// 		res.send({});
-	// 	}
-	// 	res.send(user);
-	// } catch (err) {
-	// 	res.send({});
-	// }
+router.post('/api/verify',  function (req: Request, res: Response) {
+	console.log("come in verify api");
+	var cookie = req.query.cookie; //get cookie
+	if (cookie == null) {
+		res.send({});
+		return;
+	}
+	try {
+		const decode:any = getCookie(cookie);
+		const username:any = decode.username;
+		const user:any  =  findUserByName (username) as unknown as User;
+		if (!user) {
+		  res.send({});
+		  return ;
+		}
+		const activeCookie = setCookie('username', username, 1000);
+		sendMail(user.email, `${process.env.API_URL || "http://localhost:3000"}/api/verify?cookie=${activeCookie}`);
+		res.send({
+			"cookie": true,
+			"email": user.email
+		});
+	  } catch (error) {
+		console.log(error);
+		res.send({});
+	  }
 });
 
-// ///User: put ate user info
-// router.put('/api/userupdate/:username', authenticateToken, function (user:User,  req:Request, done:any) {
-// 	UpdateUserName(user, req.body.id, done);
-// });
-
 //post /api/login
-// router.post('/api/login', function (req: Request, res: Response, done:any) {
-// 	console.log("come in~~~~~~~~~~~~~~~~~~~~~~~~");
-// 	const { username, password } = req.body;
-// 	if (!username || !password ) {
-// 		res.send({})
-// 		return ;
-// 	}
-// 	try {
-// 		const user = findUserByName(username, done) as unknown as User;
-// 		if (!user || user.password != password) {
-// 			res.send({});
-// 			return;
-// 		}
-// 		const token = generateAccessToken({ username: req.body.username });
-//     	res.send({ token });
-// 	} catch (error){
-// 		res.send({})
-// 	}
-// });
+router.post('/api/login', function (req: Request, res: Response) {
+	console.log("come in~~~~~~~~~~~~~~~~~~~~~~~~");
+	const { username, password } = req.body;
+	if (!username || !password ) {
+		res.send({})
+		return ;
+	}
+	try {
+		const user = findUserByName(username) as unknown as User;
+		if (!user || user.password != password) {
+			res.send({});
+			return;
+		}
+		const token = generateAccessToken({ username: req.body.username });
+    	res.send({ token });
+	} catch (error){
+		res.send({})
+	}
+});
 
 
 

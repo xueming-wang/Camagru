@@ -48,7 +48,8 @@ async function handleSubmit(event){
 		email: email
 	}
 	console.log(user);
-	
+
+
 	//发送请求 创建用户 post('/api/createNewUser) 收到token
 	try {
 		const response = await fetch('/api/createNewUser', {
@@ -61,9 +62,9 @@ async function handleSubmit(event){
 		if (!response) {
 			throw new Error(`Error! status: ${response.status}`);
 		}
-		const token = await response;
-		document.cookie = `token=${token}`; //设置ookie
-		window.location='/login' //跳转到登录页面
+		// const token = await response;
+		// document.cookie = `token=${token}`; //设置ookie
+		 window.location='/login' //跳转到登录页面
 	} catch (error) {
 		console.log(error);
 	}

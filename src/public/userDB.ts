@@ -26,13 +26,13 @@ var User:any = new schema ({
 //user model
 const userModel = mongoose.model('user', User)
 
-module.exports = userModel;
+// module.exports = userModel;
 
 // /** 3) Create and Save a Person */
 // //成功时调用 done(null, data)，在失败时调用 done(err)。
-export const createUserToDB = function(userName: string, password: string, email: string) {
+export function  createUserToDB(userName: string, password: string, email: string) {
+	console.log('createUserToDB!!!!!!!!!')
 	const newUser = new userModel({userName: userName, password: password, email: email})
-	//save data
 	.save(function(err:any) {
   		if (err) {
 			console.log(err);
@@ -43,26 +43,25 @@ export const createUserToDB = function(userName: string, password: string, email
 
 
 /** 5) Use `Model.find()` */
-export const findUserByName = (username:any) => {
-	userModel.find({username}, function(err:any, doc:any) {
+export function findUserByName (username:String){
+	console.log( 'what?????????????');
+	userModel.find({ username : username }, function(err:any) {
 		if (err) {
 			console.log(err);
 			return ;
 		}
-		return doc ;
-		//returns array docs
 	})
 };
 
 // /** 7) Use `Model.findById()` */
-export  const findUserById = (obj_id:any) => {
+const findUserById = (obj_id:any) => {
    userModel.findById(obj_id, function(err:any) {
   	if (err) return; console.log(err);
   })
 };
 
 // /** 8) Classic Info Update : edit userName */
-export const UpdateUserName = (username:any, newname:any) => {
+const UpdateUserName = (username:any, newname:any) => {
 	var whereuser = { 'userName': username };
 	var updatename = { 'userName': newname };
 
@@ -78,7 +77,7 @@ export const UpdateUserName = (username:any, newname:any) => {
 
 
 // // /** 8) Classic Info Update : Find, edit Email */
-export const UpdateEmail = (username:any, newemail:any) => {
+const UpdateEmail = (username:any, newemail:any) => {
 	var whereuser = { 'username': username };
 	var updateEmail = { 'email': newemail };
 
@@ -93,7 +92,7 @@ export const UpdateEmail = (username:any, newemail:any) => {
 };
 
 //  // /** 8) Classic Info Update : Find, edit PassWord */
-export const UpdatePassWord = (username:any, newpassword:any) => {
+const UpdatePassWord = (username:any, newpassword:any) => {
 	var whereuser = { 'username': username };
 	var updatePassWord = { 'password': newpassword };
 
