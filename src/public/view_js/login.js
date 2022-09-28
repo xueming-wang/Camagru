@@ -9,16 +9,15 @@ var password = document.getElementById("password").value;
 var login = {username: username, password: password};
 
 try {
+  //把res.json 放进去response
   const response =  await fetch('/api/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(login),
-  });
-  if (!response) {
-    throw new Error(`Error! status: ${response.status}`);
-  }
+  }).then(res => res.json());
+  document.cookie = `token=${response.token}`; //设置ookie
   window.location='/home' //跳转到登录页面
   } catch (error) {
   console.log(error);

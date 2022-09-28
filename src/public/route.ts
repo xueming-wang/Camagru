@@ -53,13 +53,18 @@ router.post('/api/createNewUser', function (req: Request,res: Response) {
 	const user:any = findUserByName(username);
 	if (user) {
 		console.log("user already exist");
-		res.send({});
+		res.send({ 'result': 'false'});
 		return;
 	}
 	try {
 		createUserToDB(username, password, email);
-	}catch(e) {
-		console.log('什么鬼?????????????');
+		const activeCookie = setCookie('username', username, 1000);
+		sendMail(email, `${process.env.API_URL || "http://localhost:3000"}/api/verify?cookie=${activeCookie}`);
+		res.send({
+			'result': true,
+			'email': email
+		});
+	} catch(e) {
 		console.log(e);
 		res.send({});
 	 }
@@ -69,7 +74,13 @@ router.post('/api/createNewUser', function (req: Request,res: Response) {
 //email verify
 router.post('/api/verify',  function (req: Request, res: Response) {
 	console.log("come in verify api");
+	//get cookie 
+	//if !user  return
+	//else user.active = true
+	//dabaase update user
+	//redirect to home
 	var cookie = req.query.cookie; //get cookie
+	//decode get username
 	if (cookie == null) {
 		res.send({});
 		return;
@@ -82,12 +93,11 @@ router.post('/api/verify',  function (req: Request, res: Response) {
 		  res.send({});
 		  return ;
 		}
-		const activeCookie = setCookie('username', username, 1000);
-		sendMail(user.email, `${process.env.API_URL || "http://localhost:3000"}/api/verify?cookie=${activeCookie}`);
+		// decode token
 		res.send({
-			"cookie": true,
-			"email": user.email
-		});
+			'result': true,
+		})
+	
 	  } catch (error) {
 		console.log(error);
 		res.send({});
@@ -97,6 +107,7 @@ router.post('/api/verify',  function (req: Request, res: Response) {
 //post /api/login
 router.post('/api/login', function (req: Request, res: Response) {
 	console.log("come in~~~~~~~~~~~~~~~~~~~~~~~~");
+	//确认后端的账号格式!!!!!!!!
 	const { username, password } = req.body;
 	if (!username || !password ) {
 		res.send({})
@@ -104,18 +115,22 @@ router.post('/api/login', function (req: Request, res: Response) {
 	}
 	try {
 		const user = findUserByName(username) as unknown as User;
-		if (!user || user.password != password) {
+		if (!username || password != user.password) {
 			res.send({});
 			return;
 		}
-		const token = generateAccessToken({ username: req.body.username });
-    	res.send({ token });
+		const cookie = setCookie('username', username, 1000);
+    	res.send({ cookie });
 	} catch (error){
 		res.send({})
 	}
 });
 
+//login 之后的token是不变的, 退出登陆或过去就变了
 
+// fsdkjfhdksjhfds => {username} ----> verify
+// kjsdhfhgrkwlejdfhdksjfh => {username} ---> cookie
+// ekjfhgjksdhrdfklsgfhj => {username} ---> seconde login --> cookie
 
             
 //get请求 从网站根目录访问localhost:3000/

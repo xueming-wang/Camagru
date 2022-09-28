@@ -40,7 +40,6 @@ export function sendMail (email: string, test: any) {
 	 })
 }
 
-module.exports = sendMail
 
 
 
