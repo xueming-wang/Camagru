@@ -1,14 +1,13 @@
 
 import express, { Router, Response, Request } from "express"
-import { User, createUserToDB , findUserByName } from "./userDB";
+import { User, createUserToDB , findUserByName, UpdateActive } from "./userDB";
 import { sendMail } from "./service/mail_serv";
-import { generateAccessToken } from './service/auth_serv';
-import { setCookie,  getCookie, checkCookie } from './service/cookie';
-// import { authenticateToken } from './service/auth_serv';
-
+import { encrypt, decrypt } from "./service/encrypt_serv";
+import { usernameConfimation, passwordConfirmation, isEmail } from "./service/auth_serv";
 
 export const router: Router = express.Router();
 router.use(express.json());
+
 
 //一个请求和一个响应对象作为参数
 router.get('/', function(_req: Request, res: Response) {
@@ -18,7 +17,7 @@ router.get('/', function(_req: Request, res: Response) {
 
 router.get('/home', function (_req: Request, res: Response) {
 	console.log("/home GET 请求");
-	res.sendFile(__dirname + "/views/homePage.html");
+	res.sendFile(__dirname + "/views/homePage.html");	
 });
 
 router.get('/signup', function(_req: Request, res: Response) {
@@ -48,81 +47,79 @@ router.post('/api/createNewUser', function (req: Request,res: Response) {
 	const email = req.body.email;
 
 	if (!username || !password || !email)
-		 res.send({});
+		 res.send(null);
+	if (usernameConfimation(username)==false || passwordConfirmation(password)==false || isEmail(email)==false)
+		res.send(null);
 	console.log('username:' + username);
-	const user:any = findUserByName(username);
-	if (user) {
-		console.log("user already exist");
-		res.send({ 'result': 'false'});
-		return;
-	}
+	
 	try {
+		const user:any = findUserByName(username);
+		if (user == null) {
+			console.log("user exist")
+			res.send(null);
+			return ;
+		}
 		createUserToDB(username, password, email);
-		const activeCookie = setCookie('username', username, 1000);
-		sendMail(email, `${process.env.API_URL || "http://localhost:3000"}/api/verify?cookie=${activeCookie}`);
+		const activeCookie = encrypt(username);
+		sendMail(email, `http://localhost:3000/api/verify?cookie=${activeCookie}`);
 		res.send({
-			'result': true,
-			'email': email
+			'create': true,
 		});
+		res.redirect('/login');
+		console.log("create user success");
 	} catch(e) {
 		console.log(e);
-		res.send({});
+		res.send(null);
 	 }
 		
 });
 
 //email verify
-router.post('/api/verify',  function (req: Request, res: Response) {
+router.get('/api/verify',  function (req: Request, res: Response) {
 	console.log("come in verify api");
 	//get cookie 
-	//if !user  return
-	//else user.active = true
-	//dabaase update user
-	//redirect to home
 	var cookie = req.query.cookie; //get cookie
-	//decode get username
+	console.log(cookie);
 	if (cookie == null) {
-		res.send({});
+		res.send(null);
 		return;
 	}
+	// decode
+	const username:any = decrypt(cookie);
+	console.log("decipher: " + username);
+	//find user
 	try {
-		const decode:any = getCookie(cookie);
-		const username:any = decode.username;
-		const user:any  =  findUserByName (username) as unknown as User;
-		if (!user) {
-		  res.send({});
-		  return ;
+		const user:any = findUserByName(username);
+		if (!user)  {
+			return ;
 		}
-		// decode token
-		res.send({
-			'result': true,
-		})
-	
-	  } catch (error) {
+		UpdateActive(username); //return json
+		res.redirect('/login')
+	} catch (error) {
 		console.log(error);
-		res.send({});
-	  }
+		return ;
+	}	
 });
 
 //post /api/login
-router.post('/api/login', function (req: Request, res: Response) {
+router.post('/api/login', function (req: any, res: Response) {
 	console.log("come in~~~~~~~~~~~~~~~~~~~~~~~~");
 	//确认后端的账号格式!!!!!!!!
 	const { username, password } = req.body;
 	if (!username || !password ) {
-		res.send({})
+		res.send(null)
 		return ;
 	}
 	try {
 		const user = findUserByName(username) as unknown as User;
 		if (!username || password != user.password) {
-			res.send({});
+			res.send(null);
 			return;
 		}
-		const cookie = setCookie('username', username, 1000);
-    	res.send({ cookie });
+		req.session.user = user;
+		res.send ({ user });
 	} catch (error){
-		res.send({})
+		res.send(null)
 	}
 });
 

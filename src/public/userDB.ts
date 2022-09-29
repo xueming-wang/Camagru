@@ -1,3 +1,4 @@
+import { request } from 'express';
 import { displayPartsToString, isNamedExportBindings } from 'typescript';
 import './mongodb';
 
@@ -6,72 +7,73 @@ const schema = mongoose.Schema;
 
 // /** 2) Create a 'User' Model */
 export interface User {
-  userName: string;
-  password: string;
-  email: string;
-  userId: string;
-  active: boolean;
-  imgs: [{type: object}];
+  'userName': string;
+  'password': string;
+  'email': string;
+  'active': boolean;
+  'imgs': [{type: object}];
 }
 
 var User:any = new schema ({
-	userName: '', //前端没有传参数的时候报错，并不能防止参数为空
-	passWord: '',
-	email: '',
-	userId: '',
-	active: false,
-	imgs: [{data:'', path: '', comment: ''}],
+	'userName': '', //前端没有传参数的时候报错，并不能防止参数为空
+	'passWord': '',
+	'email': '',
+	'active': false,
+	'imgs': [{data:'', path: '', comment: ''}],
 });
 
 //user model
 const userModel = mongoose.model('user', User)
 
-// module.exports = userModel;
-
 // /** 3) Create and Save a Person */
-// //成功时调用 done(null, data)，在失败时调用 done(err)。
 export function  createUserToDB(userName: string, password: string, email: string) {
 	console.log('createUserToDB!!!!!!!!!')
 	const newUser = new userModel({userName: userName, password: password, email: email})
-	.save(function(err:any) {
+	.save(function(err:any, newUser:any) {
   		if (err) {
 			console.log(err);
 			return ;
+		}
+		else {
+			console.log(newUser);
 		}
   	});
 };
 
 
-/** 5) Use `Model.find()` */
-export function findUserByName (username:String){
-	console.log( 'what?????????????');
-	userModel.find({ username : username }, function(err:any) {
+/** 5) //find user if exit by username  
+ * 当查询到即一个符合条件的数据时，将停止继续查询 返回单个文档*/
+export async function findUserByName (username:String){
+	console.log('findUserByName!!!!!!!!!')
+	userModel.findOne({userName: username }, function (err:any, user:any) {
 		if (err) {
 			console.log(err);
-			return ;
+			return null;
 		}
-	})
+		else {
+			console.log(user);
+			return user;
+		}
+	});
+	
 };
 
-// /** 7) Use `Model.findById()` */
-const findUserById = (obj_id:any) => {
-   userModel.findById(obj_id, function(err:any) {
-  	if (err) return; console.log(err);
-  })
-};
+
+//6: find():所有满足条件的结果值 返回一个数组
+
+
 
 // /** 8) Classic Info Update : edit userName */
-const UpdateUserName = (username:any, newname:any) => {
-	var whereuser = { 'userName': username };
-	var updatename = { 'userName': newname };
+const UpdateUserName = (newname:any) => {
+	var whereuser = { 'username': request.body.username };
+	var updatename = { $set: {'userName': newname }};
 
-	userModel.update(whereuser, updatename, function(err:any, res:Response) {
+	userModel.update(whereuser, updatename, function(err:any) {
 		if (err) { 
 			console.log(err);
 			return ;
-		} else {
-			return res.json();
 		}
+		return ;
 	})
 };
 
@@ -101,19 +103,34 @@ const UpdatePassWord = (username:any, newpassword:any) => {
 			console.log(err);
 			return ;
 		} else {
-			return res.json();
+			console.log(res);
 		}
 	})
 };
 
+export const UpdateActive = (username:any) => {
+	console.log('UpdatePassWord!!!!!!!!!');
+	var whereuser = { 'username': username };
+	var updateActive = { 'active': true };
+
+	userModel.update(whereuser, updateActive, function(err:any, res:Response) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		else {
+			console.log(res);
+		}
+	})
+};
 
 export const deleUser = (username:any) => {
 	var whereuser = { 'username':username };
-	userModel.remove(whereuser, function(err: any, res: Response) {
+	userModel.remove(whereuser, function(err: any) {
 		if (err) {
 			console.log(err);
 		} else {
-			console.log(res);
+			console.log('delete success');
 		}
 	})
 };

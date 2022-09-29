@@ -1,5 +1,6 @@
 const galleryParent = document.getElementById("Gallery");
 
+
 // if (isLogin) {}
 
 // const imgs = getImages()

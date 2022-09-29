@@ -17,9 +17,14 @@ try {
     },
     body: JSON.stringify(login),
   }).then(res => res.json());
-  document.cookie = `token=${response.token}`; //设置ookie
-  window.location='/home' //跳转到登录页面
+  if (!response) {
+    alert('Error! username already exists');
+    throw new Error(`Error! status: ${response.status}`);
+  }
+  console.log(response);
+  window.localStorage.setItem('token', response.token);
+  window.location = '/home'//跳转到登录页面
   } catch (error) {
-  console.log(error);
+    console.log(error);
   }
 }

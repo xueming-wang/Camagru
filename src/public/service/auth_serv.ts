@@ -3,6 +3,26 @@ require("dotenv").config();
 
 const jwt = require('jsonwebtoken');
 
+export function usernameConfimation(username:any) {
+	if (username.length < 5 || username.length > 10) 
+    return false;
+	if (/^[a-zA-Z]+$/.test(username) == false) 
+    return false;
+  return true;
+}
+
+export function passwordConfirmation(password:any) {
+	for(let i = 0; i < password.length; i++) {
+		if (password.length < 5 || password.length > 15) return false;
+		if (/^[a-zA-Z]+$/.test(password[i]) == false && /^[0-9]+$/.test(password[i]) == false) return false;
+	}
+  return true;
+}
+
+export function isEmail(email:any) {
+	var reg = /^[0-9a-zA-Z]+@[0-9a-zA-Z]+.[0-9a-zA-Z]+$/;
+	return reg.test(email) ? true : false;
+}
 // get config vars
 dotenv.config();
 // access config var
@@ -14,23 +34,6 @@ require('crypto').randomBytes(64).toString('hex')
 export function generateAccessToken(username:any) {
     return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
 }
-
-
-/*用户使用用户名密码来请求服务器
-服务器进行验证用户的信息
-服务器通过验证发送给用户一个token
-客户端存储token，并在每次请求时附送上这个token值
-服务端验证token值，并返回数据
-*/
-
-// GET https://example.com:4000/api/userOrders
-// Authorization: Bearer JWT_ACCESS_TOKEN
-
-// // get token from fetch request
-// const token = await res.json();
-
-// // set token in cookie
-// document.cookie = `token=${token}`
 
 //middleware function for authentication 
 export function authenticateToken(req:any , res:any, next:any) {

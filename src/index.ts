@@ -2,7 +2,7 @@ import express, { Express, Request, Response } from "express";
 import { router } from "./public/route";
 import './public/mongodb';
 import './public/userDB';
-
+import './public/service/auth_serv';
 //引入mongodb模块
 const mongoose = require('mongoose');
 
@@ -12,6 +12,18 @@ const Users = require('./public/userDB');
 
 //创建express实例
 const app: Express = express();
+
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+app.use(cookieParser('session_Camagru'));
+
+app.use(session({
+	secret: 'sessiont_Camagru',//与cookieParser中的一致
+	name: 'Camagru_xuwang',
+	cookie: {maxAge: 100000},
+	resave: true,
+	saveUninitialized:true,
+}));
 
 const jwt = require('jsonwebtoken');
 require('crypto').randomBytes(64).toString('hex')
