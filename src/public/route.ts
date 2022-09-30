@@ -41,7 +41,7 @@ router.get('/profil', function (_req: Request, res: Response) {
 });
 
 ///User:create new user  
-router.post('/api/createNewUser', function (req: Request,res: Response) {
+router.post('/api/createNewUser', async function (req: Request,res: Response) {
 	const username = req.body.username;
 	const password = req.body.password;
 	const email = req.body.email;
@@ -53,8 +53,10 @@ router.post('/api/createNewUser', function (req: Request,res: Response) {
 	console.log('username:' + username);
 	
 	try {
-		const user:any = findUserByName(username);
-		if (user == null) {
+		//取不到user
+		const user:any = await findUserByName(username);  
+		console.log('in creat api' + user);
+		if (user) {
 			console.log("user exist")
 			res.send(null);
 			return ;
@@ -65,11 +67,11 @@ router.post('/api/createNewUser', function (req: Request,res: Response) {
 		res.send({
 			'create': true,
 		});
-		res.redirect('/login');
+		// res.redirect('/login');
 		console.log("create user success");
 	} catch(e) {
 		console.log(e);
-		res.send(null);
+		return ;
 	 }
 		
 });
@@ -102,26 +104,41 @@ router.get('/api/verify',  function (req: Request, res: Response) {
 });
 
 //post /api/login
-router.post('/api/login', function (req: any, res: Response) {
+router.post('/api/login', async function (req: any, res: Response) {
 	console.log("come in~~~~~~~~~~~~~~~~~~~~~~~~");
 	//确认后端的账号格式!!!!!!!!
-	const { username, password } = req.body;
+	const username = req.body.userName;
+	const password = req.body.passWord;
+	console.log(username + " 取得 " + password);
+
 	if (!username || !password ) {
 		res.send(null)
 		return ;
 	}
 	try {
-		const user = findUserByName(username) as unknown as User;
-		if (!username || password != user.password) {
+		const user:any = await findUserByName(username);//!!!!!!!!!!!!娶不到数据
+		console.log('in api: ' + user.passWord);
+		// console.log(user.passWord + " " + password);
+		if (!user || user.passWord != password) {
+			console.log("passWord wrong")
 			res.send(null);
 			return;
 		}
 		req.session.user = user;
-		res.send ({ user });
+		res.send ({
+			'token': user.token,
+		});
 	} catch (error){
 		res.send(null)
 	}
 });
+
+//get imgs from mongoDB
+// router.get('/api/imgs', function(req: Request, res: Response) {
+
+// })
+
+
 
 //login 之后的token是不变的, 退出登陆或过去就变了
 

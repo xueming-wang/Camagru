@@ -60,10 +60,9 @@ async function handleSubmit(event){
 			body: JSON.stringify(user),
 		});
 		if (!response) {
-			alert('Error! username already exists');
 			throw new Error(`Error! status: ${response.status}`);
 		}
-		// window.location='/login' //跳转到登录页面
+		window.location='/login' //跳转到登录页面
 	} catch (error) {
 		console.log(error);
 	}

@@ -8,7 +8,7 @@ const schema = mongoose.Schema;
 // /** 2) Create a 'User' Model */
 export interface User {
   'userName': string;
-  'password': string;
+  'passWord': string;
   'email': string;
   'active': boolean;
   'imgs': [{type: object}];
@@ -26,9 +26,9 @@ var User:any = new schema ({
 const userModel = mongoose.model('user', User)
 
 // /** 3) Create and Save a Person */
-export function  createUserToDB(userName: string, password: string, email: string) {
+export function  createUserToDB(username: string, password: string, email: string) {
 	console.log('createUserToDB!!!!!!!!!')
-	const newUser = new userModel({userName: userName, password: password, email: email})
+	const newUser = new userModel({'userName': username, 'passWord': password, 'email': email})
 	.save(function(err:any, newUser:any) {
   		if (err) {
 			console.log(err);
@@ -43,15 +43,15 @@ export function  createUserToDB(userName: string, password: string, email: strin
 
 /** 5) //find user if exit by username  
  * 当查询到即一个符合条件的数据时，将停止继续查询 返回单个文档*/
-export async function findUserByName (username:String){
+export function findUserByName (username:String){
 	console.log('findUserByName!!!!!!!!!')
-	userModel.findOne({userName: username }, function (err:any, user:any) {
+	userModel.findOne({'userName': username }, function (err:any, user:any) {
 		if (err) {
 			console.log(err);
-			return null;
+			return ;
 		}
 		else {
-			console.log(user);
+			console.log('in database + ' +  user);
 			return user;
 		}
 	});
@@ -109,7 +109,7 @@ const UpdatePassWord = (username:any, newpassword:any) => {
 };
 
 export const UpdateActive = (username:any) => {
-	console.log('UpdatePassWord!!!!!!!!!');
+	console.log('Update active!!!!!!!!!');
 	var whereuser = { 'username': username };
 	var updateActive = { 'active': true };
 
@@ -151,6 +151,11 @@ export  const Addimg = (img:string, userId:any, done:any) => {
 };
 
 
+// export const findAllImg = (userId:any, done:any) => {
+// 	userModel.findById(userId, function(err:any, userModel:any) {
+// 		if (err) return ;
+// 		done(null, userModel.imgs)
+// 	})
 
 
 // /** model.findOneAndUpdate() **/
@@ -198,16 +203,3 @@ export  const Addimg = (img:string, userId:any, done:any) => {
 // exports.removeById = removeById;
 // exports.removeManyPeople = removeManyPeople;
 // exports.queryChain = queryChain;
-
-
-
-
-// exports的方法可以直接调用
-// module.exports需要new对象之后才可以调用
-// var sayHello = function(){
-//     console.log('hello')
-// }
-// exports.sayHello = sayHello
-
-// console.log(exports); 
-// console.log(module.exports);
