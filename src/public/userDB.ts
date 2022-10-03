@@ -1,5 +1,6 @@
 import { request } from 'express';
-import { displayPartsToString, isNamedExportBindings } from 'typescript';
+import { ConnectionStates } from 'mongoose';
+import { displayPartsToString, isNamedExportBindings, nodeModuleNameResolver } from 'typescript';
 import './mongodb';
 
 const mongoose = require('./mongodb');	
@@ -23,7 +24,7 @@ var User:any = new schema ({
 });
 
 //user model
-const userModel = mongoose.model('user', User)
+export const userModel = mongoose.model('user', User)
 
 // /** 3) Create and Save a Person */
 export function  createUserToDB(username: string, password: string, email: string) {
@@ -35,7 +36,7 @@ export function  createUserToDB(username: string, password: string, email: strin
 			return ;
 		}
 		else {
-			console.log(newUser);
+			console.log(newUser + 'saved successfully!');
 		}
   	});
 };
@@ -43,21 +44,16 @@ export function  createUserToDB(username: string, password: string, email: strin
 
 /** 5) //find user if exit by username  
  * 当查询到即一个符合条件的数据时，将停止继续查询 返回单个文档*/
-export function findUserByName (username:String){
+export async function findUserByName (username:String){
 	console.log('findUserByName!!!!!!!!!')
-	userModel.findOne({'userName': username }, function (err:any, user:any) {
-		if (err) {
-			console.log(err);
-			return ;
-		}
-		else {
-			console.log('in database + ' +  user);
-			return user;
-		}
-	});
-	
-};
-
+	const user:any = await userModel.findOne({'userName': username }).exec();
+	if (!user) {
+		console.log('findUserByName is null');
+		return null;
+	}
+	console.log('find user =====', user);
+	return user;
+}
 
 //6: find():所有满足条件的结果值 返回一个数组
 
@@ -113,7 +109,7 @@ export const UpdateActive = (username:any) => {
 	var whereuser = { 'username': username };
 	var updateActive = { 'active': true };
 
-	userModel.update(whereuser, updateActive, function(err:any, res:Response) {
+	userModel.updateOne(whereuser, updateActive, function(err:any, res:Response) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -194,7 +190,7 @@ export  const Addimg = (img:string, userId:any, done:any) => {
 
 // exports.PersonModel = Person;
 // exports.createAndSavePerson = createAndSavePerson;
-// exports.findPeopleByName = findPeopleByName;
+// exports.findUserByName = findUserByName;
 // exports.findOneByFood = findOneByFood;
 // exports.findPersonById = findPersonById;
 // exports.findEditThenSave = findEditThenSave;

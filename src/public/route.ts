@@ -1,9 +1,10 @@
 
 import express, { Router, Response, Request } from "express"
-import { User, createUserToDB , findUserByName, UpdateActive } from "./userDB";
+import {createUserToDB , UpdateActive, findUserByName } from "./userDB";
 import { sendMail } from "./service/mail_serv";
 import { encrypt, decrypt } from "./service/encrypt_serv";
 import { usernameConfimation, passwordConfirmation, isEmail } from "./service/auth_serv";
+import { userModel } from "./userDB";
 
 export const router: Router = express.Router();
 router.use(express.json());
@@ -40,8 +41,9 @@ router.get('/profil', function (_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/profilPage.html");
 });
 
+
 ///User:create new user  
-router.post('/api/createNewUser', async function (req: Request,res: Response) {
+router.post('/api/createNewUser',  function (req: Request,res: Response) {
 	const username = req.body.username;
 	const password = req.body.password;
 	const email = req.body.email;
@@ -51,24 +53,22 @@ router.post('/api/createNewUser', async function (req: Request,res: Response) {
 	if (usernameConfimation(username)==false || passwordConfirmation(password)==false || isEmail(email)==false)
 		res.send(null);
 	console.log('username:' + username);
-	
 	try {
-		//取不到user
-		const user:any = await findUserByName(username);  
-		console.log('in creat api' + user);
-		if (user) {
-			console.log("user exist")
-			res.send(null);
-			return ;
-		}
-		createUserToDB(username, password, email);
-		const activeCookie = encrypt(username);
-		sendMail(email, `http://localhost:3000/api/verify?cookie=${activeCookie}`);
-		res.send({
-			'create': true,
+		const user:any = findUserByName(username).then((user: any) => {
+			console.log("in creat api user: " + user);
+			if (user) {
+				console.log("user exist")
+				res.send(null);
+				return ;
+			}
+			createUserToDB(username, password, email);
+			const activeCookie = encrypt(username);
+			sendMail(email, `http://localhost:3000/api/verify?cookie=${activeCookie}`);
+			res.send({
+				'create': true,
+			});
+			res.redirect('/login');
 		});
-		// res.redirect('/login');
-		console.log("create user success");
 	} catch(e) {
 		console.log(e);
 		return ;
@@ -91,12 +91,12 @@ router.get('/api/verify',  function (req: Request, res: Response) {
 	console.log("decipher: " + username);
 	//find user
 	try {
-		const user:any = findUserByName(username);
-		if (!user)  {
-			return ;
-		}
-		UpdateActive(username); //return json
-		res.redirect('/login')
+		const user:any = findUserByName(username).then((user: any) => {
+			if (!user)  {
+				return ;
+			}
+			UpdateActive(username); //return json
+		});
 	} catch (error) {
 		console.log(error);
 		return ;
@@ -104,8 +104,8 @@ router.get('/api/verify',  function (req: Request, res: Response) {
 });
 
 //post /api/login
-router.post('/api/login', async function (req: any, res: Response) {
-	console.log("come in~~~~~~~~~~~~~~~~~~~~~~~~");
+router.post('/api/login',  function (req: any, res: Response) {
+	console.log("come in~ login API ~~~~~~~~~~~~~~~~~~~~~~~");
 	//确认后端的账号格式!!!!!!!!
 	const username = req.body.userName;
 	const password = req.body.passWord;
@@ -116,22 +116,46 @@ router.post('/api/login', async function (req: any, res: Response) {
 		return ;
 	}
 	try {
-		const user:any = await findUserByName(username);//!!!!!!!!!!!!娶不到数据
-		console.log('in api: ' + user.passWord);
-		// console.log(user.passWord + " " + password);
-		if (!user || user.passWord != password) {
-			console.log("passWord wrong")
-			res.send(null);
-			return;
-		}
-		req.session.user = user;
-		res.send ({
-			'token': user.token,
+		const user: any = findUserByName(username).then((user: any) => {
+			if (user == null) {
+				console.log('User is null');
+				res.send(null);
+				return;
+			}
+			if (user.passWord != password) {
+				console.log("passWord wrong")
+				res.send(null);
+				return;
+			}
+			console.log("logoin success!!");
+			req.session.user = user;
+			// console.log("session: ", req.session.user);
+			res.send ({
+				'login': true,
+			});
+			// res.redirect('/home');
 		});
-	} catch (error){
-		res.send(null)
+	} catch (error) {
+		console.log(error);
+		return ;
 	}
 });
+
+
+
+//post /api/logout
+router.post('/api/logout', function (req: any, res: Response) {
+	console.log("come in logout API");
+	req.session.destroy(function(err:any) {	
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		res.send({
+			'logout': true,
+		});
+	});
+});	
 
 //get imgs from mongoDB
 // router.get('/api/imgs', function(req: Request, res: Response) {

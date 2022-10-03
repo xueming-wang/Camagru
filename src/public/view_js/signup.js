@@ -57,11 +57,15 @@ async function handleSubmit(event){
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(user),
-		});
+			body: JSON.stringify(user), 
+			mode: 'cors',
+			cache: 'default',
+			redirect: 'follow',
+		}).then(res => res.json());
 		if (!response) {
-			throw new Error(`Error! status: ${response.status}`);
+			alert('Sign up failed');
 		}
+		alert('Sign up success');
 		window.location='/login' //跳转到登录页面
 	} catch (error) {
 		console.log(error);
