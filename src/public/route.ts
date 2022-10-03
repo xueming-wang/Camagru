@@ -62,12 +62,12 @@ router.post('/api/createNewUser',  function (req: Request,res: Response) {
 				return ;
 			}
 			createUserToDB(username, password, email);
+			//cookie
 			const activeCookie = encrypt(username);
 			sendMail(email, `http://localhost:3000/api/verify?cookie=${activeCookie}`);
 			res.send({
 				'create': true,
 			});
-			res.redirect('/login');
 		});
 	} catch(e) {
 		console.log(e);
@@ -78,7 +78,7 @@ router.post('/api/createNewUser',  function (req: Request,res: Response) {
 
 //email verify
 router.get('/api/verify',  function (req: Request, res: Response) {
-	console.log("come in verify api");
+	// console.log("come in verify api");
 	//get cookie 
 	var cookie = req.query.cookie; //get cookie
 	console.log(cookie);
@@ -93,6 +93,7 @@ router.get('/api/verify',  function (req: Request, res: Response) {
 	try {
 		const user:any = findUserByName(username).then((user: any) => {
 			if (!user)  {
+				alert("user not find")
 				return ;
 			}
 			UpdateActive(username); //return json
@@ -133,7 +134,6 @@ router.post('/api/login',  function (req: any, res: Response) {
 			res.send ({
 				'login': true,
 			});
-			// res.redirect('/home');
 		});
 	} catch (error) {
 		console.log(error);

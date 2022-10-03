@@ -55,96 +55,92 @@ export async function findUserByName (username:String){
 	return user;
 }
 
-//6: find():所有满足条件的结果值 返回一个数组
 
-
-
-// /** 8) Classic Info Update : edit userName */
-const UpdateUserName = (newname:any) => {
-	var whereuser = { 'username': request.body.username };
-	var updatename = { $set: {'userName': newname }};
-
-	userModel.update(whereuser, updatename, function(err:any) {
-		if (err) { 
-			console.log(err);
-			return ;
-		}
-		return ;
-	})
-};
-
-
-// // /** 8) Classic Info Update : Find, edit Email */
-const UpdateEmail = (username:any, newemail:any) => {
-	var whereuser = { 'username': username };
-	var updateEmail = { 'email': newemail };
-
-	userModel.update(whereuser, updateEmail, function(err:any, res:Response) {
-		if (err) { 
-			console.log(err);
-			return ;
-		} else {
-			return res.json();
-		}
-	})
-};
-
-//  // /** 8) Classic Info Update : Find, edit PassWord */
-const UpdatePassWord = (username:any, newpassword:any) => {
-	var whereuser = { 'username': username };
-	var updatePassWord = { 'password': newpassword };
-
-	userModel.update(whereuser, updatePassWord, function(err:any, res:Response) {
-		if (err) { 
-			console.log(err);
-			return ;
-		} else {
-			console.log(res);
-		}
-	})
-};
-
+/* active email*/
 export const UpdateActive = (username:any) => {
 	console.log('Update active!!!!!!!!!');
 	var whereuser = { 'username': username };
 	var updateActive = { 'active': true };
 
-	userModel.updateOne(whereuser, updateActive, function(err:any, res:Response) {
+	userModel.updateOne(whereuser, updateActive, function(err:any, _res:Response) {
 		if (err) {
 			console.log(err);
 			return ;
 		}
-		else {
-			console.log(res);
-		}
+		console.log('updateActive succuess');
 	})
 };
 
-export const deleUser = (username:any) => {
-	var whereuser = { 'username':username };
-	userModel.remove(whereuser, function(err: any) {
-		if (err) {
-			console.log(err);
-		} else {
-			console.log('delete success');
-		}
-	})
-};
+// /** 8) Classic Info Update : edit userName */
+// const UpdateUserName = (newname:any) => {
+// 	var whereuser = { 'username': request.body.username };
+// 	var updatename = { $set: {'userName': newname }};
+
+// 	userModel.update(whereuser, updatename, function(err:any) {
+// 		if (err) { 
+// 			console.log(err);
+// 			return ;
+// 		}
+// 		return ;
+// 	})
+// };
+
+
+// // /** 8) Classic Info Update : Find, edit Email */
+// const UpdateEmail = (username:any, newemail:any) => {
+// 	var whereuser = { 'username': username };
+// 	var updateEmail = { 'email': newemail };
+
+// 	userModel.update(whereuser, updateEmail, function(err:any, res:Response) {
+// 		if (err) { 
+// 			console.log(err);
+// 			return ;
+// 		} else {
+// 			return res.json();
+// 		}
+// 	})
+// };
+
+//  // /** 8) Classic Info Update : Find, edit PassWord */
+// const UpdatePassWord = (username:any, newpassword:any) => {
+// 	var whereuser = { 'username': username };
+// 	var updatePassWord = { 'password': newpassword };
+
+// 	userModel.update(whereuser, updatePassWord, function(err:any, res:Response) {
+// 		if (err) { 
+// 			console.log(err);
+// 			return ;
+// 		} else {
+// 			console.log(res);
+// 		}
+// 	})
+// };
+
+// export const deleUser = (username:any) => {
+// 	var whereuser = { 'username':username };
+// 	userModel.remove(whereuser, function(err: any) {
+// 		if (err) {
+// 			console.log(err);
+// 		} else {
+// 			console.log('delete success');
+// 		}
+// 	})
+// };
 
 
 // /** 9 add img, then Save **/
-export  const Addimg = (img:string, userId:any, done:any) => {
-  // .findById() method to find a user by _id with the parameter     userId as search key. 
-  userModel.findById(userId, function(err:any, userModel:any) {
-    if (err) return ;
-    userModel.imgs.push({imgs: img}); //push img to array
-  //and inside the find callback - save() the updated User.
-  userModel.save(function(err:any, updata:any) {
-        if (err) return ;
-        done(null, updata)
-    })
-  })
-};
+// export  const Addimg = (img:string, userId:any, done:any) => {
+//   // .findById() method to find a user by _id with the parameter     userId as search key. 
+//   userModel.findById(userId, function(err:any, userModel:any) {
+//     if (err) return ;
+//     userModel.imgs.push({imgs: img}); //push img to array
+//   //and inside the find callback - save() the updated User.
+//   userModel.save(function(err:any, updata:any) {
+//         if (err) return ;
+//         done(null, updata)
+//     })
+//   })
+// };
 
 
 // export const findAllImg = (userId:any, done:any) => {

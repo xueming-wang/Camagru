@@ -52,7 +52,7 @@ async function handleSubmit(event){
 
 	//发送请求 创建用户 post('/api/createNewUser) 收到token
 	try {
-		const response = await fetch('/api/createNewUser', {
+		const res = await fetch('/api/createNewUser', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -61,9 +61,10 @@ async function handleSubmit(event){
 			mode: 'cors',
 			cache: 'default',
 			redirect: 'follow',
-		}).then(res => res.json());
-		if (!response) {
+		})
+		if (res) {
 			alert('Sign up failed');
+			return ;
 		}
 		alert('Sign up success');
 		window.location='/login' //跳转到登录页面
