@@ -22,7 +22,7 @@ try {
       mode: 'cors',
       cache: 'default',
       redirect: 'follow',
-    }).then(res => res.json());
+    })
 
     console.log('login fetch return :' , res);
     if (!res) {

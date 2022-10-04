@@ -6,6 +6,7 @@
 		<meta charset="utf-8">
 		<title>Camagru</title>
 		<link rel="stylesheet" href="../public/css/home.css" type="text/css"/>
+		<script src="../../public/view_js/home.js" type='text/javascript'></script>
 	</head>
 
 	<!-- 可见的页面内容 -->
@@ -17,7 +18,7 @@
 					<!-- check有没有登录:没有登录就显示login和signup，有登录就显示logout -->
 					<a id="login" href="/login">Login</a>
 					<a id="signup" href="/signup">Signup</a>
-					<a id="logout"  onclike="handleLogout()" href="/">logout</a>
+					<button id="logout" onclike="handleLogout(event)" href="/">logout</button>
 				</div>
 			</header>
 			<main>

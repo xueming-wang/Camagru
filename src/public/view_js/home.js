@@ -1,7 +1,7 @@
 const galleryParent = document.getElementById("Gallery");
 
 //check有没有登录:没有登录就显示login和signup，有登录就显示logout
-async function checkLogin() {
+function checkLogin() {
 	console.log('cnm:', window.document.cookie.Camagru_xuwang)
 		//没有cookie
 		//如果没有cookie，就显示login和signup，隐藏logout
@@ -21,7 +21,7 @@ async function checkLogin() {
 		}
 }
 
-async function handleLogout() {
+async function handleLogout(event) {
 	try {
 		const response = await fetch("/api/logout", {
 			method: "POST",
