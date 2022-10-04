@@ -1,42 +1,72 @@
-const galleryParent = document.getElementById("Gallery");
 
-//check有没有登录:没有登录就显示login和signup，有登录就显示logout
-function checkLogin() {
-	console.log('cnm:', window.document.cookie.Camagru_xuwang)
-		//没有cookie
-		//如果没有cookie，就显示login和signup，隐藏logout
-		if (window.document.cookie.Camagru_xuwang === null) {
-			console.log("no token");
-			document.getElementById("login").style.display = "block";
-			document.getElementById("signup").style.display = "block";
-			document.getElementById("logout").style.display = "none";
+
+async function getImages() {
+	var galleryParent = document.getElementById("Gallery");
+	try {
+		const res = await fetch("/api/images", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			mode: 'cors',
+			cache: 'default',
+		})
+		if (!res) {
+			alert('get images failed');
+			return ;
 		}
-		//有cookie
-		else {
-			console.log("have token");
-			console.log(window.localStorage.getItem("token"));
-			document.getElementById("login").style.display = "none";
-			document.getElementById("signup").style.display = "none";
-			document.getElementById("logout").style.display = "block";
+		console.log(res);
+		for (let i = 0; i < res.length; i++) {
+			let img = document.createElement("img");
+			img.src = res[i].url;
+			img.alt = res[i].name;
+			galleryParent.appendChild(img);
 		}
+	}
+	catch (error) {
+		console.log(error);
+	}
 }
+
+const cookie = document.cookie;
+console.log("cookie : " + cookie.length);
+
+if (cookie.length === 0) {
+	console.log("no token");
+	document.getElementById("login").style.display = "block";
+	document.getElementById("signup").style.display = "block";
+	document.getElementById("logout").style.display = "none";
+	getImages();  //不能评论
+}
+//有cookie
+else {
+	console.log("have token");
+	document.getElementById("login").style.display = "none";
+	document.getElementById("signup").style.display = "none";
+	document.getElementById("logout").style.display = "block";
+	document.getElementById("email").style.display = "block";
+	getImages();   //可以评论
+}
+
+
 
 async function handleLogout(event) {
 	try {
-		const response = await fetch("/api/logout", {
+		const res = await fetch("/api/logout", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({}),
+			mode: 'cors',
+			cache: 'default',
 		});
-		if (!response) {
+		if (!res) {
 			alert("logout response is null");
-			// throw new Error(`Error! status: ${response.status}`);
+			return ;
 		}
-		console.log("in home js : " + response); //ok
-		window.localStorage.removeItem("token");
-		window.location = "/home";
+		console.log("in home : " + res); //ok
+		location.reload();
 		} catch (error) {
 			console.log(error);
 		}	

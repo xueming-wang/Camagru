@@ -62,8 +62,9 @@ async function handleSubmit(event){
 			cache: 'default',
 			redirect: 'follow',
 		})
-		if (res) {
-			alert('Sign up failed');
+		console.log('res: ', res);
+		if (!res) {
+			console.log('create user failed');
 			return ;
 		}
 		alert('Sign up success');

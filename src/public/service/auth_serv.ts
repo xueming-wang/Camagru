@@ -31,6 +31,7 @@ process.env.TOKEN_SECRET;
 //Node.js’s built-in crypto library内置的加密库
 require('crypto').randomBytes(64).toString('hex')
 
+
 //middleware function for authentication 
 // export function authenticateToken(req:any , res:any, next:any) {
 //   const authHeader = req.headers['authorization']

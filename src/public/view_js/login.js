@@ -21,14 +21,13 @@ try {
       body: JSON.stringify(login),
       mode: 'cors',
       cache: 'default',
-      redirect: 'follow',
-    })
-
-    console.log('login fetch return :' , res);
+      credentials: 'include',
+    })    
     if (!res) {
       alert('login failed');
       return ;
     }
+    console.log('login fetch return :' , res);
     window.location = '/home'//跳转到登录页面
 
   } catch (error) {

@@ -1,10 +1,9 @@
 
 import express, { Router, Response, Request } from "express"
-import {createUserToDB , UpdateActive, findUserByName } from "./userDB";
+import {createUserToDB , UpdateActive, findUserByName, getAllImags } from "./userDB";
 import { sendMail } from "./service/mail_serv";
 import { encrypt, decrypt } from "./service/encrypt_serv";
 import { usernameConfimation, passwordConfirmation, isEmail } from "./service/auth_serv";
-import { userModel } from "./userDB";
 
 export const router: Router = express.Router();
 router.use(express.json());
@@ -17,30 +16,34 @@ router.get('/', function(_req: Request, res: Response) {
 });
 
 router.get('/home', function (_req: Request, res: Response) {
-	console.log("/home GET 请求");
 	res.sendFile(__dirname + "/views/homePage.html");	
+	console.log("GET 首页")
 });
 
 router.get('/signup', function(_req: Request, res: Response) {
-	console.log("GET注册页面");
 	res.sendFile(__dirname + "/views/signupPage.html");
+	console.log("GET注册页面");
 });
 
 router.get('/login', function(_req: Request, res: Response) {
-	console.log("GET登陆页面");
 	res.sendFile(__dirname + "/views/loginPage.html");
+	console.log("GET登陆页面");
 })
 
 router.get('/montage', function (_req: Request, res: Response) {
-	console.log("照相页面");
 	res.sendFile(__dirname + "/views/montagePage.html");
+	console.log("照相页面");
 });
 
 router.get('/profil', function (_req: Request, res: Response) {
-	console.log("个人信息页面"); 
 	res.sendFile(__dirname + "/views/profilPage.html");
+	console.log("个人信息页面"); 
 });
 
+router.get('/avtivemail', function (_req: Request, res: Response) {
+	res.sendFile(__dirname + "/views/emailPage.html");
+	console.log("个人信息页面"); 
+});
 
 ///User:create new user  
 router.post('/api/createNewUser',  function (req: Request,res: Response) {
@@ -106,7 +109,7 @@ router.get('/api/verify',  function (req: Request, res: Response) {
 
 //post /api/login
 router.post('/api/login',  function (req: any, res: Response) {
-	console.log("come in~ login API ~~~~~~~~~~~~~~~~~~~~~~~");
+	// console.log("come in~ login API ~~~~~~~~~~~~~~~~~~~~~~~");
 	//确认后端的账号格式!!!!!!!!
 	const username = req.body.userName;
 	const password = req.body.passWord;
@@ -130,8 +133,9 @@ router.post('/api/login',  function (req: any, res: Response) {
 			}
 			console.log("logoin success!!");
 			req.session.user = user;
-			// console.log("session: ", req.session.user);
-			res.send ({
+			const Cookie = encrypt(username);
+			res.cookie('activeCookie', Cookie);
+			res.send({
 				'login': true,
 			});
 		});
@@ -146,33 +150,43 @@ router.post('/api/login',  function (req: any, res: Response) {
 //post /api/logout
 router.post('/api/logout', function (req: any, res: Response) {
 	console.log("come in logout API");
-	req.session.destroy(function(err:any) {	
+	req.session.destroy((err:any) => {	
 		if (err) {
 			console.log(err);
 			return ;
 		}
+		res.clearCookie('activeCookie');
 		res.send({
 			'logout': true,
 		});
 	});
-});	
+	
+});
 
-//get imgs from mongoDB
-// router.get('/api/imgs', function(req: Request, res: Response) {
+//get /api/imgs
+router.get('/api/images', function (_req: any, res: Response) {
+	console.log("come in imgs API");
+	const imgs = getAllImags();
+	if (imgs == null) {
+		res.send(null);
+		return ;
+	}
+	res.send(imgs);
+});
 
-// })
 
+// post api/avtivemail
+router.post('/api/activemail', function (req: any, res: Response) {
+	const email = req.body.email;
+	console.log("come in activemail API");
+	if (isEmail(email) == false) {
+		res.send(null);
+		return ;
+	}
+	const activeCookie = encrypt(email);
+	sendMail(email, `http://localhost:3000/api/verify?cookie=${activeCookie}`);
+	res.send({
+		'active': true,
+	});
+});
 
-
-//login 之后的token是不变的, 退出登陆或过去就变了
-
-// fsdkjfhdksjhfds => {username} ----> verify
-// kjsdhfhgrkwlejdfhdksjfh => {username} ---> cookie
-// ekjfhgjksdhrdfklsgfhj => {username} ---> seconde login --> cookie
-
-            
-//get请求 从网站根目录访问localhost:3000/
-// router.get('/profile/:id/:name', function(req: Request, res: Response) {
-// 	console.dir(req.params);
-// 	res.send("test GET parames " + req.params.name + " " + req.params.id);
-// });

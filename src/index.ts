@@ -1,8 +1,10 @@
 import express, { Express, Request, Response } from "express";
-import { router } from "./public/route";
+import { router } from "./public/api";
+
 import './public/mongodb';
 import './public/userDB';
 import './public/service/auth_serv';
+
 //引入mongodb模块
 const mongoose = require('mongoose');
 
@@ -20,19 +22,10 @@ app.use(cookieParser('session_Camagru'));
 app.use(session({
 	secret: 'sessiont_Camagru',//与cookieParser中的一致
 	name: 'Camagru_xuwang',
-	cookie: {maxAge: 100000},
+	cookie: {maxAge: 24 * 7 * 3600}, //7天
 	resave: true,
-	saveUninitialized:true,
+	saveUninitialized:true,  //保存初始化数据
 }));
-
-app.all('*', function(_req:any, res:any, next) {
-	res.header("Access-Control-Allow-Origin", "http://localhost:8080");
-	res.header('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS');
-	res.header('Access-Control-Allow-Credentials', 'true');
-	res.header("Access-Control-Allow-Headers", "X-Requested-With");
-	res.header('Access-Control-Allow-Headers', 'Content-Type');
-	next();
-});
 
 //dotenv
 require('dotenv').config();

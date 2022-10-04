@@ -58,10 +58,8 @@ export async function findUserByName (username:String){
 
 /* active email*/
 export const UpdateActive = (username:any) => {
-	console.log('Update active!!!!!!!!!');
 	var whereuser = { 'username': username };
 	var updateActive = { 'active': true };
-
 	userModel.updateOne(whereuser, updateActive, function(err:any, _res:Response) {
 		if (err) {
 			console.log(err);
@@ -70,6 +68,18 @@ export const UpdateActive = (username:any) => {
 		console.log('updateActive succuess');
 	})
 };
+
+/* get alluser imgs */
+export const getAllImags = () => {
+	userModel.find({imgs: {}}, function(err:any, res:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		return res;
+	})
+}
+
 
 // /** 8) Classic Info Update : edit userName */
 // const UpdateUserName = (newname:any) => {
@@ -178,20 +188,4 @@ export const UpdateActive = (username:any) => {
 // 	})
 // }
 
-// /** **Well Done !!**
-// /* You completed these challenges, let's go celebrate !
-//  */
 
-// //----- **DO NOT EDIT BELOW THIS LINE** ----------------------------------
-
-// exports.PersonModel = Person;
-// exports.createAndSavePerson = createAndSavePerson;
-// exports.findUserByName = findUserByName;
-// exports.findOneByFood = findOneByFood;
-// exports.findPersonById = findPersonById;
-// exports.findEditThenSave = findEditThenSave;
-// exports.findAndUpdate = findAndUpdate;
-// exports.createManyPeople = createManyPeople;
-// exports.removeById = removeById;
-// exports.removeManyPeople = removeManyPeople;
-// exports.queryChain = queryChain;
