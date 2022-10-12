@@ -1,3 +1,4 @@
+/* HANDLE LOGIN*/
 
 async function handlelogin(event) {
 
@@ -11,8 +12,8 @@ var login = {
   'passWord': password,
 };
 console.log('in js : ' + username + ' ' + password);
+
 try {
-  //把res.json 放进去response
     const res =  await fetch('/api/login', {
       method: 'POST',
       headers: {
@@ -22,15 +23,56 @@ try {
       mode: 'cors',
       cache: 'default',
       credentials: 'include',
-    })    
-    if (!res) {
-      alert('login failed');
-      return ;
-    }
-    console.log('login fetch return :' , res);
-    window.location = '/home'//跳转到登录页面
-
+    }).then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      if(data['login'] == true){
+        window.location = '/home';
+      }
+      else{
+        alert('login failed');
+      }
+    })
   } catch (error) {
     console.log(error);
+  }
+}
+
+/* FORGET PWD */
+async function fogetpwd(event){ 
+  event.preventDefault();
+
+  var email = prompt("entre your email:","");
+  console.log(email);
+  if(!email){ 
+      alert("email can not be empty");
+  }
+  else{
+      var emailInfo = {
+          'email': email,
+      };
+      try {
+          const res =  await fetch('/api/forgetpwd', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(emailInfo),
+              mode: 'cors',
+              cache: 'default',
+              credentials: 'include',
+          }).then(response => response.json())
+          .then(data => {
+              console.log('Success:', data);
+              if(data['forget'] == true){
+                  alert('send email success');
+              }
+              else{
+                  alert('send email failed');
+              }
+          })
+      } catch (error) {
+          console.log(error);
+      }
   }
 }

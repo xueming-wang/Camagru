@@ -1,4 +1,3 @@
-
 function usernameConfimation(username) {
 	if (username.length < 5 || username.length > 10) return false;
 	if (/^[a-zA-Z]+$/.test(username) == false) return false;
@@ -16,12 +15,13 @@ function isEmail(email) {
 	return reg.test(email) ? true : false;
 }
 
+
+/* HANDLE SIGN UP*/ 
 async function handleSubmit(event){
 	//取消默认事件
 	console.log('sign up button!!!!!!!!!!!!!!!!');
 	event.preventDefault();
 
-	// const form = document.getElementById('signup-form');
 	const username = document.getElementById('username').value;
 	const password = document.getElementById('password').value;
 	const email = document.getElementById('email').value;
@@ -48,11 +48,8 @@ async function handleSubmit(event){
 		email: email
 	}
 	console.log(user);
-
-
-	//发送请求 创建用户 post('/api/createNewUser) 收到token
 	try {
-		const res = await fetch('/api/createNewUser', {
+		const newuser = await fetch('/api/createNewUser', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -60,28 +57,20 @@ async function handleSubmit(event){
 			body: JSON.stringify(user), 
 			mode: 'cors',
 			cache: 'default',
-			redirect: 'follow',
-		})
-		console.log('res: ', res);
-		if (!res) {
-			console.log('create user failed');
-			return ;
+		}).then(res => res.json())
+		.then(data => data);
+			console.log('data: ????: ', newuser);
+			if (newuser['create']= true ) {
+				// set token in cookie
+				// document.cookie = `token=${data.token}`;
+				alert('Sign up successfully');
+				window.location.href = '/login';	
+			} else {
+				alert('Sign up failed');
+			}
+		} catch (error) {
+			console.log(error);
 		}
-		alert('Sign up success');
-		window.location='/login' //跳转到登录页面
-	} catch (error) {
-		console.log(error);
 	}
-}
-
 	
-	// get token from fetch request
-	// const token = await res.json();
-	// set token in cookie
-	// document.cookie = `token=${token}`
-
-	//跳转到主页
-	
-
-
 

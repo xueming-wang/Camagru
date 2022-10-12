@@ -1,13 +1,11 @@
-//可以修改个人信息
 
 <!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
 		<title>Camagru</title>
-		<link rel="stylesheet" href="../public/css/home.css" type="text/css"/>
-		<script type="text/javascript">
-			
+		<link rel="stylesheet" href="../public/css/profile.css" type="text/css"/>
+		<script type="text/javascript" src="../../public/view_js/profile.js">	
 		</script>
 		
 	</head>
@@ -17,13 +15,32 @@
 		<div>
 			<header>
 				<div>
-					<a>Camagru</a>
-						个人页面
+					<a>PROFILE</a>
+					<p><button type="button" id="logout"  onclick="handleLogout(event)" href="/home">logout</button></p>
 				</div>
 			</header>
 			<main>
 				<div class="flex-center">
-					
+					<p>your Username</p>
+					<p class="profile" id='username'></p>
+
+					<p>your PassWord </p>
+					<p class="profile" id='password'></p>
+
+					<p>your Email</p>
+					<p class="profile" id='email'></p>
+					<a href="javascript:void(0)"  font-size="large" onclick="document.getElementById('edit_page').style.display='block'">edit</a>
+				</div>
+				<div id="edit_page" class="editPage">
+					<form  id='signup-form' class="formule" action="" formenctype="multipart/form-data">
+						<p>new username</p>
+						<p><input id='newuserName' type="test" value=""></p>
+						<p>new Email</p>
+						<p><input id='newEmail' type="test" value=""></p>
+						<p>new PassWord</p>
+						<p><input id='newpassWord' type="test" value=""></p>
+						<button type="submit" onclick="handleEdit(event)">submit</button>
+					</form>
 				</div>
 			</main>
 			<footer>
@@ -31,6 +48,6 @@
 			</footer>
 		</div>
 	</body>
-
+	<script type="text/javascript" src="../../public/view_js/edit.js"></script>
 
 </html>

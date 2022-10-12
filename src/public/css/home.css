@@ -1,12 +1,21 @@
 body {
 	margin: 0;
 }
+
+.nav {
+	margin-right: auto;
+	margin-left: auto;
+	min-width: 80%;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	margin-top: 0%;
+	flex-shrink: 0;
+}
 header {
 	background-image: url(../img/noir.gif);
 	opacity: 0.8;
-	position: absolute;
-	top: 0px;
-	left: 0px;
+	margin-top: 0%;
 	height: 75px;
 	right: 0px;
 	overflow: hidden;

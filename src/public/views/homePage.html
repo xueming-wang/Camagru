@@ -6,24 +6,27 @@
 		<meta charset="utf-8">
 		<title>Camagru</title>
 		<link rel="stylesheet" href="../public/css/home.css" type="text/css"/>
+		<script src="../../public/view_js/checklogin.js" type='text/javascript'></script>
 	</head>
 
 	<!-- 可见的页面内容 -->
 	<body>
 		<div>
 			<header>
-				<div>
-					<a>Camagru</a>
+				<div class="nav">
+					<p>Camagru</p>
 					<!-- check有没有登录:没有登录就显示login和signup，有登录就显示logout -->
-					<a id="login" href="/login">Login</a>
-					<a id="signup" href="/signup">Signup</a>
-					<a id="email" href="/activemail">activeEmail</a>
-					<button type="button" id="logout"  onclick="handleLogout(event)" href="/home">logout</button>
+					<p><a id="login" href="/login">Login</a></p>
+					<p><a id="signup" href="/signup">Signup</a></p>
+					<p><a id="email" href="/sendmail">activeEmail</a></p>
+					<p><a id="profile" href="/profile">profile</a></p>
+					<p><a id="montage" href="/montage">montage</a></p>
+					<p><button type="button" id="logout"  onclick="handleLogout(event)" href="/home">logout</button></p>
 				</div>
 			</header>
 			<main>
 				<div id="Gallery" class="flex-center">
-					
+
 				</div>
 			</main>
 			<footer>

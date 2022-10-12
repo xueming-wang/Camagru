@@ -1,27 +1,28 @@
 import { request } from 'express';
-import { ConnectionStates } from 'mongoose';
-import { displayPartsToString, isNamedExportBindings, nodeModuleNameResolver } from 'typescript';
+import { setSourceMapRange } from 'typescript';
 import './mongodb';
+import { encrypt } from './service/encrypt_serv';
 
 const mongoose = require('./mongodb');	
 const schema = mongoose.Schema;
 
-// /** 2) Create a 'User' Model */
-export interface User {
-  'userName': string;
-  'passWord': string;
-  'email': string;
-  'active': boolean;
-  'imgs': [{type: object}];
-}
-
-var User:any = new schema ({
-	'userName': '', //前端没有传参数的时候报错，并不能防止参数为空
-	'passWord': '',
-	'email': '',
-	'active': false,
-	'imgs': [{data:'', path: '', comment: ''}],
+// /** 2) Create a 'User' Model  JSON*/
+const oneImg:any = new schema ({
+	'imgurl': String,
+	'Comment': String,
+	'date': String,
+	'imgId': String,
 });
+
+
+const User:any = new schema ({
+	'userName': String,
+ 	'passWord': String,
+  	'email': String,
+  	'active': Boolean,
+});
+
+User.add({'imgs': [oneImg]});
 
 //user model
 export const userModel = mongoose.model('user', User)
@@ -29,7 +30,9 @@ export const userModel = mongoose.model('user', User)
 // /** 3) Create and Save a Person */
 export function  createUserToDB(username: string, password: string, email: string) {
 	console.log('createUserToDB!!!!!!!!!')
-	const newUser = new userModel({'userName': username, 'passWord': password, 'email': email})
+	//Encrypt user password
+    const encryptPassword:string =  encrypt(password);
+	const newUser = new userModel({'userName': username, 'passWord': encryptPassword, 'email': email})
 	.save(function(err:any, newUser:any) {
   		if (err) {
 			console.log(err);
@@ -45,20 +48,27 @@ export function  createUserToDB(username: string, password: string, email: strin
 /** 5) //find user if exit by username  
  * 当查询到即一个符合条件的数据时，将停止继续查询 返回单个文档*/
 export async function findUserByName (username:String){
-	console.log('findUserByName!!!!!!!!!')
 	const user:any = await userModel.findOne({'userName': username }).exec();
 	if (!user) {
 		console.log('findUserByName is null');
 		return null;
 	}
-	console.log('find user =====', user);
 	return user;
 }
 
+export async function findUserByEmail(email:String){
+	const user:any = await userModel.findOne({'email': email }).exec();
+	if (!user) {
+		console.log('find User Email is null');
+		return ;
+	}
+	console.log('findUserByEmail exist');
+	return user;
+}
 
 /* active email*/
 export const UpdateActive = (username:any) => {
-	var whereuser = { 'username': username };
+	var whereuser = { 'userName': username };
 	var updateActive = { 'active': true };
 	userModel.updateOne(whereuser, updateActive, function(err:any, _res:Response) {
 		if (err) {
@@ -71,60 +81,54 @@ export const UpdateActive = (username:any) => {
 
 /* get alluser imgs */
 export const getAllImags = () => {
-	userModel.find({imgs: {}}, function(err:any, res:any) {
+	userModel.find({'imgs': oneImg.imgurl}), function(err:any, res:any) {
 		if (err) {
 			console.log(err);
 			return ;
 		}
+		console.log('getAllImags succuess', res);
 		return res;
-	})
-}
+	}
+};
+	
 
 
 // /** 8) Classic Info Update : edit userName */
-// const UpdateUserName = (newname:any) => {
-// 	var whereuser = { 'username': request.body.username };
-// 	var updatename = { $set: {'userName': newname }};
+export async function UpdateUserInfo (oldusername:any, newusername:any, newpassword:any, newemail:any) {
+	var whereuser = { 'userName': oldusername };
+	const encryptPassword:string =  encrypt(newpassword);
+	var update = { $set: {'userName': newusername , 'passWord': encryptPassword, 'email': newemail} };
+	
 
-// 	userModel.update(whereuser, updatename, function(err:any) {
-// 		if (err) { 
+	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		console.log('update succuess');
+	})
+	const newuser:any = await userModel.findOne({'userName': newusername }).exec();
+	if (!newuser) {
+		console.log('findNewUserByName is null');
+		return null;
+	}
+	return newuser;
+}
+
+
+
+// findUserByToken
+// export const findUserByToken = (token:any) => {
+// 	var whereuser = { 'token': token };
+// 	userModel.findOne(whereuser, function(err:any, res:any) {
+// 		if (err) {
 // 			console.log(err);
 // 			return ;
 // 		}
-// 		return ;
+// 		console.log('findUserByToken succuess', res);
+// 		return res;
 // 	})
-// };
-
-
-// // /** 8) Classic Info Update : Find, edit Email */
-// const UpdateEmail = (username:any, newemail:any) => {
-// 	var whereuser = { 'username': username };
-// 	var updateEmail = { 'email': newemail };
-
-// 	userModel.update(whereuser, updateEmail, function(err:any, res:Response) {
-// 		if (err) { 
-// 			console.log(err);
-// 			return ;
-// 		} else {
-// 			return res.json();
-// 		}
-// 	})
-// };
-
-//  // /** 8) Classic Info Update : Find, edit PassWord */
-// const UpdatePassWord = (username:any, newpassword:any) => {
-// 	var whereuser = { 'username': username };
-// 	var updatePassWord = { 'password': newpassword };
-
-// 	userModel.update(whereuser, updatePassWord, function(err:any, res:Response) {
-// 		if (err) { 
-// 			console.log(err);
-// 			return ;
-// 		} else {
-// 			console.log(res);
-// 		}
-// 	})
-// };
+// }
 
 // export const deleUser = (username:any) => {
 // 	var whereuser = { 'username':username };

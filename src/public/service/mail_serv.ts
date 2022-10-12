@@ -20,7 +20,7 @@ import { response } from "express"
  const transporter = nodemailer.createTransport(config)
 
  //  发送邮件 调用transporter.sendMail(mail, callback)
-export function sendMail (email: string, test: any) {
+export function sendMail (email: string, test: HTMLElement | string) {
 	 console.log("-------in sendMail-------")
 	 //创建一个收件人对象
 	 const mail = {

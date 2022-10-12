@@ -1,8 +1,7 @@
 
-//tls is a built-in module in node.js
-// const tls = require('node:tls');
-import crypto from "crypto";
+/* encrypt and decrypt function */
 
+import crypto from "crypto";
 const password = 'password';
 
 const algorithm = 'aes-256-ctr';
