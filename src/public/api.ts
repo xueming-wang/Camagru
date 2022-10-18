@@ -349,11 +349,11 @@ router.post('/api/edit', authMiddlewere, function (req: any, res: Response) {
 //post /api/addimg
 router.post('/api/savePhoto', authMiddlewere, function (req: any, res: Response) {
 	const user = req.session.user;
-	const userId = user._id;
+	// const userId = user._id;
 	const username = user.userName;
 	
 	var imgInfo = req.body.photo;
-	imgInfo.userId = userId;
+	// imgInfo.userId = userId;
 	console.log("come in savephoto API: ", imgInfo);
 	
 	try {

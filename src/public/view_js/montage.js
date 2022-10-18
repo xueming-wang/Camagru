@@ -1,8 +1,8 @@
-const { createEmitAndSemanticDiagnosticsBuilderProgram } = require("typescript");
 
 /* scripy */
 var video = document.getElementById('video');
 let MediaStreamTrack;
+
 //获得video摄像头区域
 
 function getMedia(event) {
@@ -125,32 +125,20 @@ function getObjectURL(file) {
 function savePicture(event) {
     event.preventDefault();
 
-    var canvas = getObjectURL(document.getElementById('show').src);
-    if (!canvas) {
-        alert("photo is empty");
-        return;
-    }
-    let ctx = canvas.getContext('2d');
-	// canvas画图
-    ctx.drawImage(canvas, 0, 0);
-    var dataURL = canvas.toDataURL("image/png", 0.1);
-    console.log("dataURL: ", dataURL);
-
-    console.log("save picture: ????????? ", dataUrl);
-    // let time = new Date().getTime();
+    var imgurl = document.getElementById('show').src;
     //保存照片到数据库
     let photo = {
-        "imgurl":dataURL,
+        "imgurl":imgurl,
         "time": new Date().getTime(),
     };
 
     try {
-        const res = fetch("/api/savePicture", {
+        const res = fetch("/api/savePhoto", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({dataURL}),
+            body: JSON.stringify({photo}),
             mode: 'cors',
             cache: 'no-cache',
         }).then(res => res.json()).then(data => {

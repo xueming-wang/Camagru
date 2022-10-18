@@ -11,7 +11,7 @@ const Img:any = new schema ({
 	'imgurl': String,
 	'Comment': Array,
 	'time': String,
-	'userId': String,
+	// 'userId': String,
 });
 
 
