@@ -137,9 +137,11 @@ router.post('/api/login',  function (req: any, res: Response) {
 			console.log("logoin success!!");
 			req.session.user = user;
 			//set sessionid
-			req.session.user.sessionID = req.sessionID;
-			console.log("session: " + req.session.user + " " + req.session.user.sessionID);
-			
+			// console.log("req.session.user: " + req.session.user);
+			//same sessionid
+			console.log("req.sessionID: " + req.sessionID);
+			console.log("req.session.id: " + req.session.id);
+
 			res.send({
 				'login': true,
 			});
@@ -153,15 +155,20 @@ router.post('/api/login',  function (req: any, res: Response) {
 
 //post /api/logout
 router.post('/api/logout', function (req: any, res: Response) {
-	const sessionId = req.session.id;
-	console.log("session id: " + sessionId);
 
+	
+	console.log("in logout : req.session.id: " + req.session.id);
+	console.log("in logout : req.sessionID: " + req.sessionID);
+	// console.log("in logout : req.session.user: " + req.session.user);
 	req.session.destroy((err:any) => {	
 		if (err) {
 			console.log(err);
 			return ;
 		}
-		console.log("logout success", req.headers.cookie);
+		//删除了req.session.id 和 req.session.user
+		// console.log("in logout : sessionId: " + req.session.id);
+		// console.log("in logout : req.session.user: " + req.session.user);
+		console.log("in logout : req.sessionID: " + req.sessionID);
 		res.send ({
 			'logout': true,
 		});
@@ -172,14 +179,9 @@ router.post('/api/logout', function (req: any, res: Response) {
 //get /api/imgs
 router.get('/api/images', function (_req: any, res: Response) {
 	console.log("come in imgs API");
-	const imgs = userDB.getAllImags();
-	if (imgs == null) {
-		console.log("没有图片" + imgs);
-		res.send(null);
-		return ;
-	}
-	console.log("imgs: 是什么 " + imgs);
-	res.send({'imgs': imgs});
+	const imgs =  userDB.getAllImgs().then((imgs: any) => {
+		res.send(imgs);
+	});
 });
 
 
@@ -243,7 +245,7 @@ router.post('/api/forgetpwd', function (req: any, res: Response) {
 
 //get api/auth
 router.get('/api/auth',  function (req: any, res: Response) {
-	console.log("come in auth API: ",  req.session.user);
+	// console.log("come in auth API: ",  req.session.user);
 	if (req.session.user) {
 		res.send({
 			'auth': true,
@@ -322,18 +324,17 @@ router.post('/api/edit', authMiddlewere, function (req: any, res: Response) {
 				return ;
 			}
 			try {
-				const newUserInfo =  userDB.UpdateUserInfo(oldusername, newusername, newpassword, newemail);
+				const newUserInfo =  userDB.UpdateUserInfo(oldusername, newusername, newpassword, newemail).then((newUserInfo: any) => {
 				if (newUserInfo != null) {
 					console.log("update success newUserinfo: ",  newUserInfo);
 					req.session.user = newUserInfo;
-					req.session.user.sessionID = req.sessionID;
-					console.log("session: " + req.session.user + " " + req.session.user.sessionID);
+					console.log("session: " + req.session.user + " " + req.sessionID);
 					res.send({
 						'edit': true,
 					});
 				}
-			}
-			catch (error) {
+			});
+			} catch (error) {
 				console.log(error);
 				return ;
 			}
@@ -344,3 +345,29 @@ router.post('/api/edit', authMiddlewere, function (req: any, res: Response) {
 		return ;
 	}
 });
+
+//post /api/addimg
+router.post('/api/savePhoto', authMiddlewere, function (req: any, res: Response) {
+	const user = req.session.user;
+	const userId = user._id;
+	const username = user.userName;
+	
+	var imgInfo = req.body.photo;
+	imgInfo.userId = userId;
+	console.log("come in savephoto API: ", imgInfo);
+	
+	try {
+		userDB.addImg(username, imgInfo).then((result: any) => {
+			if (result != null) {
+				console.log("add img success");
+				res.send({
+					'save': true,
+				});
+			}
+		});
+	}catch (error) {
+		console.log(error);
+		return ;
+	}
+});
+

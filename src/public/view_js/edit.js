@@ -115,6 +115,7 @@ async function handleEdit(event) {
 
 /* HANDLE LOGOUT */
 async function handleLogout(event) {
+	event.preventDefault();
 	try {
 		const user = await fetch("/api/logout", {
 			method: "POST",

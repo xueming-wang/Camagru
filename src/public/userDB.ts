@@ -7,11 +7,11 @@ const mongoose = require('./mongodb');
 const schema = mongoose.Schema;
 
 // /** 2) Create a 'User' Model  JSON*/
-const oneImg:any = new schema ({
+const Img:any = new schema ({
 	'imgurl': String,
-	'Comment': String,
-	'date': String,
-	'imgId': String,
+	'Comment': Array,
+	'time': String,
+	'userId': String,
 });
 
 
@@ -19,13 +19,13 @@ const User:any = new schema ({
 	'userName': String,
  	'passWord': String,
   	'email': String,
-  	'active': Boolean,
+  	'active': false,
 });
 
-User.add({'imgs': [oneImg]});
-
+User.add({'imgs': [Img]});
 //user model
 export const userModel = mongoose.model('user', User)
+//export const imgsModel = mongoose.model('imgs', Imgs)
 
 // /** 3) Create and Save a Person */
 export function  createUserToDB(username: string, password: string, email: string) {
@@ -79,19 +79,6 @@ export const UpdateActive = (username:any) => {
 	})
 };
 
-/* get alluser imgs */
-export const getAllImags = () => {
-	userModel.find({'imgs': oneImg.imgurl}), function(err:any, res:any) {
-		if (err) {
-			console.log(err);
-			return ;
-		}
-		console.log('getAllImags succuess', res);
-		return res;
-	}
-};
-	
-
 
 // /** 8) Classic Info Update : edit userName */
 export async function UpdateUserInfo (oldusername:any, newusername:any, newpassword:any, newemail:any) {
@@ -115,81 +102,27 @@ export async function UpdateUserInfo (oldusername:any, newusername:any, newpassw
 	return newuser;
 }
 
-
-
-// findUserByToken
-// export const findUserByToken = (token:any) => {
-// 	var whereuser = { 'token': token };
-// 	userModel.findOne(whereuser, function(err:any, res:any) {
-// 		if (err) {
-// 			console.log(err);
-// 			return ;
-// 		}
-// 		console.log('findUserByToken succuess', res);
-// 		return res;
-// 	})
-// }
-
-// export const deleUser = (username:any) => {
-// 	var whereuser = { 'username':username };
-// 	userModel.remove(whereuser, function(err: any) {
-// 		if (err) {
-// 			console.log(err);
-// 		} else {
-// 			console.log('delete success');
-// 		}
-// 	})
-// };
-
+/* get all imgs */
+export async function getAllImgs () {
+	const imgs:any = await userModel.find({Img}).exec();
+	if (!imgs) {
+		console.log('getAllImgs is null');
+		return null;
+	}
+	return imgs;
+}
 
 // /** 9 add img, then Save **/
-// export  const Addimg = (img:string, userId:any, done:any) => {
-//   // .findById() method to find a user by _id with the parameter     userId as search key. 
-//   userModel.findById(userId, function(err:any, userModel:any) {
-//     if (err) return ;
-//     userModel.imgs.push({imgs: img}); //push img to array
-//   //and inside the find callback - save() the updated User.
-//   userModel.save(function(err:any, updata:any) {
-//         if (err) return ;
-//         done(null, updata)
-//     })
-//   })
-// };
-
-
-// export const findAllImg = (userId:any, done:any) => {
-// 	userModel.findById(userId, function(err:any, userModel:any) {
-// 		if (err) return ;
-// 		done(null, userModel.imgs)
-// 	})
-
-
-// /** model.findOneAndUpdate() **/
-// export const Deleteimg = (img:string, userId:any, done:any) => {
-// 	userModel.findById(userId, function(err:any, userModel:any) {
-// 		if (err) return ;
-// 		userModel.img.pull({img: img}); //pull img from array
-// 		userModel.save(function(err:any, updata:any) {
-// 			if (err) return ;
-// 			done(null, updata)
-// 		})
-// 	})
-// };
-
-// /** addComment to img */
-// const addComment = (img:string, userId:any, comment:string) => {
-// 	const img = {
-// 		img: img,
-// 		comment: comment
-// 	};
-// 	User.findById(userId, function(err:any, User:any) {
-// 		if (err) return ;
-// 		User.img.forEach((element:any) => {
-// 			if(element.img == img) {
-// 				element.comment = comment;
-// 			}
-// 		})
-// 	})
-// }
-
+export  async function addImg (username:any, img:object) {
+	//添加照片到数据库
+	var whereuser = { 'userName': username };
+	var update = { $push: {'imgs': img} };
+	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		console.log('addImg succuess');
+	})
+};
 

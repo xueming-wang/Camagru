@@ -23,17 +23,31 @@
 			</header>
 			<main>
 				<div class="flex-center">
-					<video id="video" width="400" height="500" controls></video>
-					<button id="capture">take picture</button>
-					<canvas id="canvas" width="400" height="500" controls></canvas>
-
+					<input type="button" title="开启摄像头" value="开启摄像头" onclick="getMedia(event)">
+					<input type="button" title="关闭摄像头" value="关闭摄像头" onclick="closeVideo(event)">
+					<video id="video" width="300px" height="300px" autoplay="autoplay"></video>
+					<button id="snap" onclick="takePhoto(event)">take picture</button>
+					<canvas id="canvas" width="200" height="200" controls></canvas>
+					<button id="savephoto" onclick="savePhoto(event)">save</button>
+					<button id="annuler" onclick="annulePhoto(event)">annuler</button>
 				</div>
+				<!-- show take photo -->
+				<div id="photo" class="photo"></div>
+				<!-- telecharger la photo -->
+				<form action="" enctype="multipart/form-data"></form>
+					<input  id="file" type="file" onchange="changepicture(this)" accept="image/png, image/jpeg, image/gif, image/jpg" />
+					<img src="" id="show" width="200" />
+					<button value="telecharger" onclick="savePicture(event)">save photo</button>
+				</form>
+				<!-- createObjectURL -->
+
+			
 			</main>
 			<footer>
 				This is footer.
 			</footer>
 		</div>
 	</body>
-	<script src="../view_js/montage.js" type="text/javascript"></script>
+	<script src="../../public/view_js/montage.js" type="text/javascript"></script>
 
 </html>

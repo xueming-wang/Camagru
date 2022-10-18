@@ -12,7 +12,7 @@ async function checkLogin() {
 		credentials: 'include',
 	}).then(res => res.json())
 		.then(data => data) 
-		console.log("checkLogin", user);
+		console.log("!!!!!!!!!!checkLogin: ", user);
 		if(user['auth'] == true){
 			console.log("login ^^^^^^^^^^^^^^^^^^^");
 			document.getElementById("signup").style.display = "block";
