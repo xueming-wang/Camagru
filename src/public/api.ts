@@ -354,10 +354,11 @@ router.post('/api/savePhoto', authMiddlewere, function (req: any, res: Response)
 	
 	var imgInfo = req.body.photo;
 	// imgInfo.userId = userId;
-	console.log("come in savephoto API: ", imgInfo);
+	
 	
 	try {
 		userDB.addImg(username, imgInfo).then((result: any) => {
+			console.log("come in savephoto API: ", imgInfo);
 			if (result != null) {
 				console.log("add img success");
 				res.send({
@@ -370,4 +371,25 @@ router.post('/api/savePhoto', authMiddlewere, function (req: any, res: Response)
 		return ;
 	}
 });
+
+
+//get /api/getimg
+router.get('/api/allimgs', function (_req: any, res: Response) {
+	try {
+		const imgs = userDB.getAllImgs().then((imgs: any) => {
+		if (imgs == null) {
+			console.log("imgs not find");
+			return ;
+		}
+		console.log("api get all imgs success", imgs);
+		res.send(imgs);
+		});
+	}catch (error) {
+		console.log(error);
+		return ;
+	}
+}
+);
+
+
 

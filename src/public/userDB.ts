@@ -11,6 +11,7 @@ const Img:any = new schema ({
 	'imgurl': String,
 	'Comment': Array,
 	'time': String,
+	'like': Number,
 	// 'userId': String,
 });
 
@@ -23,7 +24,7 @@ const User:any = new schema ({
 });
 
 User.add({'imgs': [Img]});
-//user model
+// //user model
 export const userModel = mongoose.model('user', User)
 //export const imgsModel = mongoose.model('imgs', Imgs)
 
@@ -104,12 +105,21 @@ export async function UpdateUserInfo (oldusername:any, newusername:any, newpassw
 
 /* get all imgs */
 export async function getAllImgs () {
-	const imgs:any = await userModel.find({Img}).exec();
-	if (!imgs) {
+	const user:any = await userModel.find({"imgs": {$exists: true}}).exec();
+	if (!user) {
 		console.log('getAllImgs is null');
 		return null;
 	}
-	return imgs;
+	for (var i = 0; i < user.length; i++) {
+		console.log("user.length: " + user.length);
+		console.log("user[0] : " + user[0]);
+		console.log("user[1] : " + user[1]);
+	
+		console.log('send ????', user[i].imgs);
+		return user[i].imgs;
+	}
+	// console.log('getAllImgs exist', user[0].imgs);
+	// return user[0].imgs;
 }
 
 // /** 9 add img, then Save **/

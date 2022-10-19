@@ -28,50 +28,40 @@ function closeVideo(event){
     MediaStreamTrack && MediaStreamTrack.getVideoTracks()[0].stop();
 }
 
-
+let dataUrl;
 //获得Canvas对象 
 //创建context对象，getContext("2d") 对象是内建的 HTML5 对象，拥有多种绘制路径、矩形、圆形、字符以及添加图像的方法。
 function takePhoto(event) {
     //获得Canvas对象
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext('2d');
-	// canvas画图
-    ctx.drawImage(video, 0, 0);
-    return canvas.toDataURL("image/png", 0.1);
-    // 得到图片的base64编码数据
+    //设置Canvas的宽高为视频的宽高
+    canvas.width = video.videoWidth / 3;
+    canvas.height = video.videoHeight / 3;
+    //将视频画面绘制到Canvas上
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    //将Canvas内的信息导出为png格式的图片数据
+    dataUrl = canvas.toDataURL('image/png');
+    return dataUrl;
 }
-//图片链接也可以是 base64 字符串，直接赋值给 Image 对象 src 即可
-// function dataUrl2Image(dataUrl, callback) {
-//     var image = new Image();
-//     image.onload = function() {
-//       callback(image);
-//     };
-//     image.src = dataUrl;
-// }
-// function dataUrl2Blob(dataUrl, type) {
-//     var data = dataUrl.split(',')[1];
-//     var mimePattern = /^data:(.*?)(;base64)?,/;
-//     var mime = dataUrl.match(mimePattern)[1];
-//     var binStr = atob(data);
-//     var arr = new Uint8Array(len);
-  
-//     for (var i = 0; i < len; i++) {
-//       arr[i] = binStr.charCodeAt(i);
-//     }
-//     return new Blob([arr], {type: type || mime});
-//   }
 //保存照片
 async function savePhoto(event) {
     event.preventDefault();
 
-    const dataUrl = takePhoto(event);
+    // const dataUrl = takePhoto(event);
     console.log("dataUrl: ????????? ", dataUrl);
     // let time = new Date().getTime();
     //保存照片到数据库
+    if (dataUrl == null) {
+        alert("please take a photo first");
+        return;
+    }
     let photo = {
-        "imgurl":dataUrl,
-        "time": new Date().getTime(),
-    };
+    "imgurl":dataUrl,
+    "time": new Date().getTime(),
+    }
+
+    dataUrl = null;
     try {
        const res = fetch("/api/savePhoto", {
             method: "POST",
@@ -91,7 +81,6 @@ async function savePhoto(event) {
     } catch (error) {
         console.log(error);
     }
-
 }
 
 /*annular*/
