@@ -9,8 +9,9 @@ function sortTime(imgsArray) {
 }
 
 
+
 async function getImages() {
-	var galleryParent = document.getElementById("Gallery");
+	// let galleryParent = document.getElementById("Gallery");
 	try {
 		const imgs = await fetch("/api/allimgs", {
 			method: "GET",
@@ -20,25 +21,12 @@ async function getImages() {
 			mode: 'cors',
 			cache: 'default',
 		}).then(res => res.json())
-		.then(data => data)
-		if (imgs) {
-			for (var i = 0; i < imgs.length; i++) {
-				//创建一个Div
-				const img_container = document.createElement("div");
-				img_container.className = "img_container";
-				//创建一个img
-				var img = document.createElement("img");
-				console.log("imgs[i].imgurl:", imgs[i].imgurl);
-				img.src = imgs[i].imgurl;
-				//创建一个like图标
-				var like = document.createElement("img");
-				
-				//创建一个评论框
-				var comment_input = document.createElement("input");
-				comment_input.className = "comment_input";
 
-				img_container.appendChild(img);
-				galleryParent.appendChild(img_container);
+		if (imgs) {
+			console.log('tt?', imgs)
+			for (const img of imgs.imgs) {
+				console.log("imgs[i]._id:",  img._id);
+				createHtmlElement(img.imgurl, img._id);
 			}
 		}
 	} catch (error) {
@@ -46,8 +34,109 @@ async function getImages() {
 	}
 }
 
+let getImgId = null;
+//创建html元素 图片, 评论, 点赞
+function createHtmlElement(imgurl, imgId) {
+	let galleryParent = document.getElementById("Gallery");
+    //创建一个Div
+    const img_container = document.createElement("div");
+    //创建一个img
+    let img = document.createElement("img");
+    img.src = imgurl;
+	getImgId = imgId;
+	//显示点赞数
+	let likeNumber = document.createElement("p");
+	likeNumber.innerHTML = "0";
+
+    let likeButton = document.createElement("button");
+	let t = document.createTextNode("LIKE");
+	likeButton.id = "likeButton";
+	likeButton.onclick = HandlelikeButton;
+	// let likeIcon = document.createElement("i");
+	
+    let commentInput = document.createElement("input");
+	commentInput.value = "enter your comment";
+	let commentBtton = document.createElement("button");
+
+	galleryParent.appendChild(img_container);
+    img_container.appendChild(img);
+    img_container.appendChild(likeButton);
+	// <i class=></i>
+	likeButton.appendChild(t);
+	img_container.appendChild(likeNumber);
+    img_container.appendChild(commentInput);
+	img_container.appendChild(commentBtton);
+
+    return img_container;
+}
+
+let a = true;
+//点赞按钮
+function HandlelikeButton(event) {
+	event.preventDefault();
+	let likeButton = document.getElementById("likeButton");
+
+	let imgId = getImgId;
+	console.log("HandlelikeButton imgid:", imgId);
+
+	if (a) {
+		try {
+			const like = fetch("/api/like", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					imgId: imgId,
+				}),
+				mode: 'cors',
+				cache: 'no-cache',
+			}).then(res => res.json())
+			.then(data => data)
+			if (like) {
+				likeButton.style.color = "red";
+				a = false;
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	}
+	else if (!a) {
+		try {
+			const unlike = fetch("/api/unlike", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					imgId: imgId,
+				}),
+				mode: 'cors',
+				cache: 'no-cache',
+			}).then(res => res.json())
+			.then(data => data)
+			if (unlike) {
+				likeButton.style.color = "black";
+				a = true;
+			}
+		} catch (error) {
+			console.log(error);
+		}
+
+	}
+}
+
+//评论按钮
+function HandlecommentButton(event) {
+	event.preventDefault();
+	let commentInput = document.getElementById("commentInput");
+	let commentBtton = document.getElementById("commentBtton");
+
+	let img = document.getElementById("img");
 
 
+
+}
 
 
 

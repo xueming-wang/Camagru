@@ -9,10 +9,9 @@ const schema = mongoose.Schema;
 // /** 2) Create a 'User' Model  JSON*/
 const Img:any = new schema ({
 	'imgurl': String,
-	'Comment': Array,
-	'time': String,
+	'Comment': [{ body: String}],
+	'time': { type: Date, default: Date.now },
 	'like': Number,
-	// 'userId': String,
 });
 
 
@@ -20,7 +19,8 @@ const User:any = new schema ({
 	'userName': String,
  	'passWord': String,
   	'email': String,
-  	'active': false,
+  	'active': Boolean,
+	'notification': Boolean,
 });
 
 User.add({'imgs': [Img]});
@@ -33,7 +33,7 @@ export function  createUserToDB(username: string, password: string, email: strin
 	console.log('createUserToDB!!!!!!!!!')
 	//Encrypt user password
     const encryptPassword:string =  encrypt(password);
-	const newUser = new userModel({'userName': username, 'passWord': encryptPassword, 'email': email})
+	const newUser = new userModel({'userName': username, 'passWord': encryptPassword, 'email': email, 'active': false, 'notification': true})
 	.save(function(err:any, newUser:any) {
   		if (err) {
 			console.log(err);
@@ -110,14 +110,14 @@ export async function getAllImgs () {
 		console.log('getAllImgs is null');
 		return null;
 	}
-	for (var i = 0; i < user.length; i++) {
-		console.log("user.length: " + user.length);
-		console.log("user[0] : " + user[0]);
-		console.log("user[1] : " + user[1]);
-	
-		console.log('send ????', user[i].imgs);
-		return user[i].imgs;
+	let imgs:any = [];
+	for (const u of user) {
+		imgs = u.imgs
+		for (const i in imgs) {
+			imgs.push(i);
+		}
 	}
+	return imgs;
 	// console.log('getAllImgs exist', user[0].imgs);
 	// return user[0].imgs;
 }
@@ -135,4 +135,34 @@ export  async function addImg (username:any, img:object) {
 		console.log('addImg succuess');
 	})
 };
+
+// /* add lick */
+export  async function addLikeNum(imgId: any) {
+	console.log('addLikeNum: ', imgId);
+	var whereuser = {"imgs._id": imgId };
+	//like +1
+	var update = { $inc: {'imgs.$.like': 1} };
+	userModel.updateOne(whereuser, update, function(err:any, res:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		console.log('addLikeNum succuess', res);
+	})
+};
+
+// like -1
+export  async function subLikeNum(imgId: any) {
+	var whereuser = {'imgs._id': imgId };
+	var update = { $inc: {'imgs.$.like': -1} };
+	userModel.updateOne(whereuser, update, function(err:any, res:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		console.log('minusLikeNum succuess', res);
+	})
+};
+
+
 

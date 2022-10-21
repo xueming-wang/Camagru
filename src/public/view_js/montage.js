@@ -44,6 +44,8 @@ function takePhoto(event) {
     dataUrl = canvas.toDataURL('image/png');
     return dataUrl;
 }
+
+
 //保存照片
 async function savePhoto(event) {
     event.preventDefault();
@@ -57,8 +59,9 @@ async function savePhoto(event) {
         return;
     }
     let photo = {
-    "imgurl":dataUrl,
-    "time": new Date().getTime(),
+        "imgurl":dataUrl,
+        "time": new Date().getTime(),
+        "like": 0,
     }
 
     dataUrl = null;
@@ -119,6 +122,7 @@ function savePicture(event) {
     let photo = {
         "imgurl":imgurl,
         "time": new Date().getTime(),
+        "like": 0,
     };
 
     try {

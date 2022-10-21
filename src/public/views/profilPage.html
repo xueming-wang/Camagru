@@ -15,12 +15,13 @@
 		<div>
 			<header>
 				<div>
-					<a>PROFILE</a>
+					<p><a id="Gallery" href="/">Gallery</a></p>
 					<p><button type="button" id="logout"  onclick="handleLogout(event)" href="/home">logout</button></p>
 				</div>
 			</header>
 			<main>
 				<div class="flex-center">
+					<p>PROFILE</p>
 					<p>your Username</p>
 					<p class="profile" id='username'></p>
 
@@ -39,6 +40,8 @@
 						<p><input id='newEmail' type="test" value=""></p>
 						<p>new PassWord</p>
 						<p><input id='newpassWord' type="test" value=""></p>
+						<p>notification</p>
+						<p><input id='notification' type="checkbox" value=""></p>
 						<button type="submit" onclick="handleEdit(event)">submit</button>
 					</form>
 				</div>

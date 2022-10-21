@@ -381,8 +381,8 @@ router.get('/api/allimgs', function (_req: any, res: Response) {
 			console.log("imgs not find");
 			return ;
 		}
-		console.log("api get all imgs success", imgs);
-		res.send(imgs);
+		// console.log("api get all imgs success", imgs);
+		res.send({'imgs': imgs});
 		});
 	}catch (error) {
 		console.log(error);
@@ -391,5 +391,18 @@ router.get('/api/allimgs', function (_req: any, res: Response) {
 }
 );
 
+//post /api/like
+router.post('/api/lile',  function (req: any, _res: Response) {
+	const imgId = req.body.imgId;
+	console.log("come in like API: ", imgId);
+	userDB.addLikeNum(imgId);
+});
+
+//post /api/unlike
+router.post('/api/unlike',  function (req: any, _res: Response) {
+	const imgId = req.body.imgId;
+	console.log("come in unlike API: ", imgId);
+	userDB.subLikeNum(imgId);
+});
 
 
