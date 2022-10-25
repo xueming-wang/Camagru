@@ -101,6 +101,13 @@ function changepicture(obj) {
     document.getElementById('show').src = newsrc
 }
 
+// **blob to dataURL**
+// function blobToDataURL(blob, callback) {
+//     var a = new FileReader();
+//     a.onload = function(e) {callback(e.target.result);}
+//     a.readAsDataURL(blob);
+// }
+
 function getObjectURL(file) {
     var url = null;
     if (window.createObjectURL != undefined) { // basic
@@ -118,6 +125,9 @@ function savePicture(event) {
     event.preventDefault();
 
     var imgurl = document.getElementById('show').src;
+    // newdata = blobToDataURL(imgurl);
+    console.log(imgurl);
+
     //保存照片到数据库
     let photo = {
         "imgurl":imgurl,

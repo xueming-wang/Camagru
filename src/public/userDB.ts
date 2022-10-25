@@ -1,5 +1,3 @@
-import { request } from 'express';
-import { setSourceMapRange } from 'typescript';
 import './mongodb';
 import { encrypt } from './service/encrypt_serv';
 
@@ -12,6 +10,7 @@ const Img:any = new schema ({
 	'Comment': [{ body: String}],
 	'time': { type: Date, default: Date.now },
 	'like': Number,
+	'likeUser': Array,
 });
 
 
@@ -103,6 +102,13 @@ export async function UpdateUserInfo (oldusername:any, newusername:any, newpassw
 	return newuser;
 }
 
+//按时间排序
+function sortTime(imgsArray:any) {
+	imgsArray.sort(function (a:any, b:any) {
+		return a.time > b.time? 1: -1;
+	});
+}
+
 /* get all imgs */
 export async function getAllImgs () {
 	const user:any = await userModel.find({"imgs": {$exists: true}}).exec();
@@ -110,16 +116,13 @@ export async function getAllImgs () {
 		console.log('getAllImgs is null');
 		return null;
 	}
-	let imgs:any = [];
+	let allimgs = [];
 	for (const u of user) {
-		imgs = u.imgs
-		for (const i in imgs) {
-			imgs.push(i);
-		}
+		// console.log("u????!!!!!!!!!!!!!", u.imgs);
+		allimgs.push(u.imgs);
 	}
-	return imgs;
-	// console.log('getAllImgs exist', user[0].imgs);
-	// return user[0].imgs;
+	// console.log("imgs: ??");
+	return allimgs;
 }
 
 // /** 9 add img, then Save **/
@@ -133,36 +136,92 @@ export  async function addImg (username:any, img:object) {
 			return ;
 		}
 		console.log('addImg succuess');
+		console.log('userDB addimg 返回', _res);
+		return _res;
 	})
 };
 
+export async function getLikeUser(imgid:any) {
+	const user:any = await userModel.findOne({'_id': imgid }).exec();
+	if (!user) {
+		console.log('getLikeUser is null');
+		return null;
+	}
+	const username = user.imgs;
+	for (const i of username) {
+		if (i._id == imgid) {
+			console.log("i.likeUser", i.likeUser);
+			return i.likeUser;
+		}
+	}
+}
+
+//查看用户是否已经点赞
+export async function LikeUserExit (username:any, imgid:any) {
+	console.log("LikeUserExit?????????", imgid);
+	const user:any = await userModel.findOne({'imgs._id': imgid, 'imgs.likeUser': username}).exec();
+	if (user) {
+		console.log('findLikeUser exist');
+		return true;
+	}
+	console.log('no exist')
+	return false;
+}
+
 // /* add lick */
-export  async function addLikeNum(imgId: any) {
-	console.log('addLikeNum: ', imgId);
-	var whereuser = {"imgs._id": imgId };
+export  async function addLike(username:any , imgid: any) {
+	console.log("addLike database: ", username, "+" , imgid);
+	var whereuser = {"imgs._id": imgid};
+	// console.log('data: username: ', username);
 	//like +1
-	var update = { $inc: {'imgs.$.like': 1} };
-	userModel.updateOne(whereuser, update, function(err:any, res:any) {
+	if ( await LikeUserExit(username, imgid) == true) {
+		console.log('likeUserExit, return');
+		return ;
+	}
+	var update = { $inc: {'imgs.$.like': 1}, $push: {'imgs.$.likeUser':username} };
+	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
 		}
-		console.log('addLikeNum succuess', res);
+		console.log('addLikeNum succuess');
 	})
 };
 
 // like -1
-export  async function subLikeNum(imgId: any) {
-	var whereuser = {'imgs._id': imgId };
-	var update = { $inc: {'imgs.$.like': -1} };
-	userModel.updateOne(whereuser, update, function(err:any, res:any) {
+export  async function subLike(username:any, imgid: any) {
+	console.log("subLike database: ", username, "+" , imgid);
+	var whereuser = {"imgs._id": imgid};
+	var update = { $inc: {'imgs.$.like': -1} , $pull: {'imgs.$.likeUser':username}};
+	if ( await LikeUserExit(username, imgid) == false) {
+		console.log('likeUser no Exit, can not sub');
+		return ;
+	}
+	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
 		}
-		console.log('minusLikeNum succuess', res);
+		console.log('minusLikeNum succuess');
 	})
 };
+
+//
+export async function getLikeNum (imgid:any) {
+	// console.log("in getLikeNum: ????????");
+	const img:any = await userModel.findOne({'imgs._id': imgid}).exec();
+	if (!img) {
+		console.log('findLikeNum is null');
+		return null;
+	}
+	for(const i of img.imgs) {
+		if (i._id == imgid) {
+			return i.like;
+		}
+	}
+	return null;
+}
+
 
 
 

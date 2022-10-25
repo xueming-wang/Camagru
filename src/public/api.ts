@@ -5,6 +5,7 @@ import { sendMail } from "./service/mail_serv";
 import { encrypt, decrypt } from "./service/encrypt_serv";
 import { usernameConfimation, passwordConfirmation, isEmail } from "./service/auth_serv";
 import { authMiddlewere } from "./service/auth_serv";
+import { isNonNullChain } from "typescript";
 
 
 export const router: Router = express.Router();
@@ -351,18 +352,67 @@ router.post('/api/savePhoto', authMiddlewere, function (req: any, res: Response)
 	const user = req.session.user;
 	// const userId = user._id;
 	const username = user.userName;
-	
 	var imgInfo = req.body.photo;
 	// imgInfo.userId = userId;
-	
-	
+	userDB.addImg(username, imgInfo).then((result: any) => {
+		if (result) {
+			res.send({
+				'save': true,
+			});
+		}
+	}
+	);
+});
+
+
+//get /api/getimg
+router.get('/api/allimgs',  function (_req: any, res: Response) {
 	try {
-		userDB.addImg(username, imgInfo).then((result: any) => {
-			console.log("come in savephoto API: ", imgInfo);
-			if (result != null) {
-				console.log("add img success");
+		const imgs =  userDB.getAllImgs().then((imgs: any) => {
+		if (imgs == null) {
+			console.log("imgs not find");
+			return ;
+		}
+		const sortimgs = Array.from(imgs).sort((a: any, b: any) => {
+			if (a.time < b.time) return -1;
+			if (a.time > b.time) return 1;
+			return 0;
+		});
+		// console.log("sortimgs: ", sortimgs);
+		//显示 所有的图片 faux
+		// console.log("api get all imgs ");
+		res.send({'imgs': sortimgs});
+		});
+	}catch (error) {
+		console.log(error);
+		return ;
+	}
+}
+);
+
+
+//post /api/islike	
+router.post('/api/islike', function (req: any, res: Response) {
+	const imgId= req.body.imgId;
+	try {
+		const user = req.session.user;
+		if (user == null) {
+			console.log("user not find");
+			res.send({
+				'user': false,
+			});
+			return ;
+		}
+		const username = user.userName;
+		const islike =   userDB.LikeUserExit(username, imgId).then((islike: any) => {
+			if (islike == true) {
 				res.send({
-					'save': true,
+					'islike': true,
+				});
+			}
+			else {
+				res.send({
+					'islike': false,
 				});
 			}
 		});
@@ -373,36 +423,71 @@ router.post('/api/savePhoto', authMiddlewere, function (req: any, res: Response)
 });
 
 
-//get /api/getimg
-router.get('/api/allimgs', function (_req: any, res: Response) {
+
+//post /api/like
+router.post('/api/like',  function (req: any, res: Response) {
+	const imgId= req.body.imgId;
+	// console.log("come in like API: ", imgId);
 	try {
-		const imgs = userDB.getAllImgs().then((imgs: any) => {
-		if (imgs == null) {
-			console.log("imgs not find");
+		const user = req.session.user;
+		if (user == null) {
+			console.log("user not find");
+			res.send({
+				'user': false,
+			});
 			return ;
 		}
-		// console.log("api get all imgs success", imgs);
-		res.send({'imgs': imgs});
+		const username = user.userName;
+		const num = userDB.addLike(username, imgId);
+		res.send({
+			'like': true,
 		});
+	
 	}catch (error) {
 		console.log(error);
 		return ;
 	}
-}
-);
-
-//post /api/like
-router.post('/api/lile',  function (req: any, _res: Response) {
-	const imgId = req.body.imgId;
-	console.log("come in like API: ", imgId);
-	userDB.addLikeNum(imgId);
 });
 
 //post /api/unlike
-router.post('/api/unlike',  function (req: any, _res: Response) {
+router.post('/api/unlike',  function (req: any, res: Response) {
+
 	const imgId = req.body.imgId;
 	console.log("come in unlike API: ", imgId);
-	userDB.subLikeNum(imgId);
+	try {
+		const user = req.session.user;
+		if (user == null) {
+			console.log("user not find");
+			res.send({
+				'user': false,
+			});
+			return ;
+		}
+		const username = user.userName;
+		userDB.subLike(username, imgId);
+		res.send({
+			'unlike': true,
+		});
+	}	catch (error){
+		console.log(error);
+		return ;
+	}
 });
 
+
+//get /api/likenum
+router.post('/api/likenum',  function (req: any, res: Response) {	
+	const imgId = req.body.imgId;
+	// console.log("come in likenum API: ");
+	try {
+		const num = userDB.getLikeNum(imgId).then((num: any) => {
+		res.send({
+			'like': num,
+		});
+		});
+	}	catch (error){
+		console.log(error);
+		return ;
+	}
+});
 
