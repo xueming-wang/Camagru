@@ -140,8 +140,8 @@ router.post('/api/login',  function (req: any, res: Response) {
 			//set sessionid
 			// console.log("req.session.user: " + req.session.user);
 			//same sessionid
-			console.log("req.sessionID: " + req.sessionID);
-			console.log("req.session.id: " + req.session.id);
+			// console.log("req.sessionID: " + req.sessionID);
+			// console.log("req.session.id: " + req.session.id);
 
 			res.send({
 				'login': true,

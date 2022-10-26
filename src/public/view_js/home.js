@@ -51,12 +51,10 @@ async function createHtmlElement(imgurl, imgid) {
 }
 
 
-
-
 async function getLikeButton(imgid) {
 	let likeButton = document.createElement("button");
 	likeButton.id = `${imgid}_button`;
-	console.log("get likeButton.id:      ????????", likeButton.id);
+	// console.log("get likeButton.id:      ????????", likeButton.id);
 	likeButton.onclick = HandlelikeButton;
 	likeButton.innerHTML = "LIKE";
 	likeButton.value = "like";
@@ -138,6 +136,7 @@ async function HandlelikeButton(event) {
 	//get img 的id 
 	let imgId = String(event.target.id).split("_")[0];
 	const likeButton = document.getElementById(`${imgId}_button`);
+	console.log("进去 handle likeButton.id:      ????????", likeButton.id);
 	// const img = document.getElementById(imgId)
 
 	if(likeButton.value == "like") {
@@ -189,7 +188,7 @@ async function HandlelikeButton(event) {
 				cache: 'no-cache',
 			}).then(res => res.json())
 			.then(data => {
-				console.log("HandlelikeButton data:", data);
+				console.log("Handle unlikeButton data:", data);
 				if (data['user'] === false) {
 					alert('please login first');
 				}

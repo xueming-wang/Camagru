@@ -25,6 +25,7 @@ const User:any = new schema ({
 User.add({'imgs': [Img]});
 // //user model
 export const userModel = mongoose.model('user', User)
+export const imgsModel = mongoose.model('imgs', Img);
 //export const imgsModel = mongoose.model('imgs', Imgs)
 
 // /** 3) Create and Save a Person */
@@ -158,14 +159,21 @@ export async function getLikeUser(imgid:any) {
 
 //查看用户是否已经点赞
 export async function LikeUserExit (username:any, imgid:any) {
-	console.log("LikeUserExit?????????", imgid);
+	console.log("进去LikeUserExit?????????", imgid);
+
 	const user:any = await userModel.findOne({'imgs._id': imgid, 'imgs.likeUser': username}).exec();
-	if (user) {
-		console.log('findLikeUser exist');
-		return true;
+	if (user != null && user.imgs != null) {
+		for(const img of user.imgs) {
+		// {	console.log("img?????????", img);
+			if (img._id == imgid) {
+				if (img.likeUser.includes(username)) {
+					// console.log("LikeUserExit?????????");
+					return true;
+				}
+			} 
+		}
 	}
-	console.log('no exist')
-	return false;
+	return false
 }
 
 // /* add lick */
@@ -178,14 +186,16 @@ export  async function addLike(username:any , imgid: any) {
 		console.log('likeUserExit, return');
 		return ;
 	}
-	var update = { $inc: {'imgs.$.like': 1}, $push: {'imgs.$.likeUser':username} };
-	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
-		if (err) {
-			console.log(err);
-			return ;
-		}
-		console.log('addLikeNum succuess');
-	})
+	else {
+		var update = { $inc: {'imgs.$.like': 1}, $push: {'imgs.$.likeUser':username} };
+		userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+			if (err) {
+				console.log(err);
+				return ;
+			}
+			console.log('addLikeNum succuess');
+		})
+	}
 };
 
 // like -1
@@ -193,6 +203,8 @@ export  async function subLike(username:any, imgid: any) {
 	console.log("subLike database: ", username, "+" , imgid);
 	var whereuser = {"imgs._id": imgid};
 	var update = { $inc: {'imgs.$.like': -1} , $pull: {'imgs.$.likeUser':username}};
+	const you:any =  await LikeUserExit(username, imgid);
+	console.log("有这个人吗？", you);
 	if ( await LikeUserExit(username, imgid) == false) {
 		console.log('likeUser no Exit, can not sub');
 		return ;
