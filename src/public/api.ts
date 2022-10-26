@@ -438,7 +438,7 @@ router.post('/api/like',  function (req: any, res: Response) {
 			return ;
 		}
 		const username = user.userName;
-		const num = userDB.addLike(username, imgId);
+		userDB.addLike(username, imgId);
 		res.send({
 			'like': true,
 		});
@@ -481,11 +481,57 @@ router.post('/api/likenum',  function (req: any, res: Response) {
 	// console.log("come in likenum API: ");
 	try {
 		const num = userDB.getLikeNum(imgId).then((num: any) => {
-		res.send({
-			'like': num,
-		});
+			res.send({
+				'like': num,
+			});
 		});
 	}	catch (error){
+		console.log(error);
+		return ;
+	}
+});
+
+
+//post /api/addcomment
+router.post('/api/addcomment',   async function (req: any, res: Response) {
+	const commentinfo = req.body.comment;
+	const imgId = req.body.imgId;
+	console.log("come in addcomment API: ", commentinfo, imgId);
+	try {
+		const user = req.session.user;
+		if (user == null) {
+			console.log("user not find");
+			res.send({
+				'user': false,
+			});
+			return ;
+		}
+		const username = user.userName;
+		userDB.addComment(imgId, commentinfo);
+		res.send({
+			'addcomment': true,
+		});
+		await userDB.getUserEmail(imgId).then((email: any) => {
+			const test: string = "some one comment your photo: " + commentinfo;
+			sendMail(email, test);
+			
+		});
+	}	catch (error){
+		console.log(error);
+		return ;
+	}
+});
+
+router.post('/api/getcomments',  async function (req: any, res: Response) {
+	const imgId = req.body.imgId;
+	// console.log("come in getcomment API: ");
+	try {
+		const comments = await userDB.getCommentByImgId(imgId).then((comments: any) => {
+			res.send({
+				'commentsArray': comments,
+			});
+		});
+	}	catch (error) {
 		console.log(error);
 		return ;
 	}

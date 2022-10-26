@@ -7,7 +7,7 @@ const schema = mongoose.Schema;
 // /** 2) Create a 'User' Model  JSON*/
 const Img:any = new schema ({
 	'imgurl': String,
-	'Comment': [{ body: String}],
+	'comment': Array,
 	'time': { type: Date, default: Date.now },
 	'like': Number,
 	'likeUser': Array,
@@ -137,7 +137,7 @@ export  async function addImg (username:any, img:object) {
 			return ;
 		}
 		console.log('addImg succuess');
-		console.log('userDB addimg 返回', _res);
+		// console.log('userDB addimg 返回');
 		return _res;
 	})
 };
@@ -159,8 +159,7 @@ export async function getLikeUser(imgid:any) {
 
 //查看用户是否已经点赞
 export async function LikeUserExit (username:any, imgid:any) {
-	console.log("进去LikeUserExit?????????", imgid);
-
+	// console.log("进去LikeUserExit?????????", imgid);
 	const user:any = await userModel.findOne({'imgs._id': imgid, 'imgs.likeUser': username}).exec();
 	if (user != null && user.imgs != null) {
 		for(const img of user.imgs) {
@@ -234,6 +233,48 @@ export async function getLikeNum (imgid:any) {
 	return null;
 }
 
+
+// /* add comment */
+export async function addComment(imgId:any, comment:any) {
+	const whereimg = {"imgs._id": imgId};
+	const update = { $push: {'imgs.$.comment':comment} };
+	
+	userModel.updateOne(whereimg, update, function(err:any, _res:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		console.log('addComment succuess');
+	})
+};
+
+// /* get userEmail by imgid */
+export async function getUserEmail(imgId:any) {
+	const user:any = await userModel.findOne({'imgs._id': imgId}).exec();
+	if (!user) {
+		console.log('getUserEmail is null');
+		return null;
+	}
+	console.log("user.email", user.email);
+	return user.email;
+}
+
+
+// /* get comment by imgid */
+export async function getCommentByImgId(imgId:any) {
+	const user:any = await userModel.findOne({'imgs._id': imgId}).exec();
+	if (!user) {
+		console.log('getCommentByImgId is null');
+		return null;
+	}
+	for(const i of user.imgs) {
+		if (i._id == imgId) {
+			console.log("i.comment??????", i.comment);
+			return i.comment;
+		}
+	}
+	return null;
+}
 
 
 

@@ -35,6 +35,7 @@ async function createHtmlElement(imgurl, imgid) {
 
 	const likeButton = await getLikeButton(imgid)
 	const likeNumber = await getLikeNum(imgid)
+	const Comments = await getComments(imgid)
 	
 	const galleryParent = document.getElementById("Gallery");
 
@@ -42,12 +43,21 @@ async function createHtmlElement(imgurl, imgid) {
 	img.id = imgid;
     img.src = imgurl;
 
+	let commentInput = document.createElement("input");
+	commentInput.id = `${imgid}_comment`;
+	commentInput.type = "text";
+
+	let commentButton = document.createElement("button");
+	commentButton.id = `${imgid}_comment_button`;
+	commentButton.innerHTML = "valide";
+	commentButton.onclick = handleCommentButton;
+
 	galleryParent.appendChild(img);
 	galleryParent.appendChild(likeButton);
 	galleryParent.appendChild(likeNumber);
-		
-    // img_container.appendChild(commentInput);
-	// img_container.appendChild(commentBtton);
+	galleryParent.appendChild(commentInput);
+	galleryParent.appendChild(commentButton);
+	galleryParent.appendChild(Comments);
 }
 
 
@@ -127,10 +137,81 @@ async function getLikeNum(imgid) {
 		console.log(error);
 	}
 	return likeNumber;
+}
+
+
+async function handleCommentButton(event) {
+	event.preventDefault();
+	let commentId = String(event.target.id).split("_")[0];
+	console.log("commentId: ", commentId);
+	let commentInput = document.getElementById(`${commentId}_comment`);
+	let comment = '';
+	 comment = commentInput.value;
+	console.log("comment: ", comment);
+
+	if (comment != null) {
+		try {
+			const res = await fetch("/api/addcomment", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					'imgId': commentId, 
+					'comment': comment,
+				}),
+				mode: 'cors',
+				cache: 'no-cache',
+			}).then(res => res.json())
+			.then(data => {
+				if (data['user'] === false) {
+					alert('please login first');
+				}
+				if (data['addcomment'] == true) {
+					console.log("comment success");
+					location.reload();
+				}
+			})
+		} catch (error) {
+			console.log(error);
+		}
 	}
+}
+	
+async  function getComments(imgId) {
+	//拿到所有comments array
+	let comments = document.createElement("div");
+	comments.id = `${imgId}_cms`;
+	//创建p元素
+	try {
+		const res = await fetch("/api/getcomments", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({'imgId': imgId}),
+			mode: 'cors',
+			cache: 'no-cache',
+		}).then(res => res.json())
+		.then(data => {
+			if (data['commentsArray'] != null) {
+				let commentsArray = data['commentsArray'];
+				for (let i = 0; i < commentsArray.length; i++) {
+					let comment = document.createElement("p");
+					comment.innerHTML = commentsArray[i];
+					comments.appendChild(comment);
+				}
+			}
+		})
+	} catch (error) {
+		console.log(error);
+	}
+	return comments;
+}
+
+
 
 //点赞按钮
-
 async function HandlelikeButton(event) {
 	event.preventDefault();
 	//get img 的id 

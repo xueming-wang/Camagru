@@ -54,15 +54,25 @@ footer {
 	color: antiquewhite;
 }
 
-.flex-center {
+
+.flex_container {
+	margin-top: 25%;
+	margin-left: 40%;
+	width: 20%;
+	height: 100%;
+	/* padding: 200px, 100px; */
 	display: flex;
-	column-gap: 20px;
 	justify-content: center;
 	align-items: center;
 }
-.img_container {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
+
+/* .img_container {
+	height: 100%;
+	max-width: 100%;
+	margin: 0px, 100px;
+	background-color: white;
+	transition: 0.4s;
+	box-shadow: 2px, 2px, 5px, rgba(0, 0, 0, 0.2);
+
+} */
 
