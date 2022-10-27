@@ -1,3 +1,4 @@
+
 function usernameConfimation(username) {
 	if (username.length < 5 || username.length > 10) return false;
 	if (/^[a-zA-Z]+$/.test(username) == false) return false;
@@ -16,6 +17,34 @@ function isEmail(email) {
 }
 
 
+var eye=document.getElementById("eye");
+var password=document.getElementById("password");
+
+function showhide() {
+	if (password.type=="password") {
+		password.type="text";
+		eye.className="fa fa-eye-slash";
+	}
+	else{
+		password.type='password';
+		eye.className='fa fa-eye'
+	}
+}
+
+var eye2=document.getElementById("eye2");
+var password2=document.getElementById("password2");
+
+function showhide2() {
+	if (password2.type=="password") {
+		password2.type="text";
+		eye2.className="fa fa-eye-slash";
+	}
+	else{
+		password2.type='password';
+		eye2.className='fa fa-eye'
+	}
+}
+
 /* HANDLE SIGN UP*/ 
 async function handleSubmit(event){
 	//取消默认事件
@@ -24,12 +53,19 @@ async function handleSubmit(event){
 
 	const username = document.getElementById('username').value;
 	const password = document.getElementById('password').value;
+	const password2 = document.getElementById('password2').value;
 	const email = document.getElementById('email').value;
 	
-	if (!username || !password || !email) {
+	if (!username || !password || !password2 || !email) {
 		alert('Please fill in all fields'); 
 		return;
 	}
+
+	if (password !== password2) {
+		alert('Two Passwords are not the same');
+		return;
+	}
+
 	if (passwordConfirmation(password) == false) {
 		alert('Passwords do not match');
 		return;

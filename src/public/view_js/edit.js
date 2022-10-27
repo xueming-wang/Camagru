@@ -113,6 +113,91 @@ async function handleEdit(event) {
 
 }
 
+// let notification = document.getElementById('notification');
+// /*get notification*/
+// async function getNotification() {
+// 	console.log('get notification');
+// 	try {
+// 		const notification = await fetch("/api/getnotification", {
+// 			method: "GET",
+// 			headers: {
+// 				"Content-Type": "application/json",
+// 			},
+// 			mode: 'cors',
+// 			cache: 'default',
+// 		})
+// 		.then(res => res.json())
+// 		.then(data => data);
+// 		if (!notification) {
+// 			alert('get notification failed');
+// 			return ;
+// 		}
+// 		console.log('notification: ', notification);
+// 		return notification;
+// 	}
+// 	catch (err) {
+// 		console.log(err);
+// 	}
+// }
+// notification.value = getNotification();
+
+
+
+/* HANDLE NOTIFICATION */
+async function handleNotification(event) {
+	console.log('notification button!!!!!!!!!!!!!!!!');
+	event.preventDefault();
+	
+	if (notification.value == 'on') {
+		console.log('notification is on???????????');
+		try {
+			const response = await fetch("/api/updatenotification", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ 'notification': 'off' }),
+				mode: 'cors',
+				cache: 'no-cache',
+			}).then(res => res.json())
+			.then(data => {
+				if (data['updatenotifications'] == true) {
+					document.getElementById('notification').value = 'off';
+					document.getElementById('notification').innerHTML = 'ON';
+					alert(' notification off');
+				}
+			})
+		} catch (err) {
+			console.log(err);
+		}
+	} else if (notification.value == 'off') {
+		console.log('come in ?????????');
+		notification.value = 'on';
+		notification.innerHTML = 'OFF';
+		try {
+			const response = await fetch("/api/updatenotification", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ 'notification': 'on' }),
+				mode: 'cors',
+				cache: 'no-cache',
+			}).then(res => res.json())
+			.then(data => {
+				if (data['updatenotifications'] == true) {
+					document.getElementById('notification').value = 'on';
+					document.getElementById('notification').innerHTML = 'OFF';
+				}
+			})
+			
+		} catch (err) {
+			console.log(err);
+		}
+	}
+}
+
+
 /* HANDLE LOGOUT */
 async function handleLogout(event) {
 	event.preventDefault();

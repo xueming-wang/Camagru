@@ -8,6 +8,7 @@
 		<meta charset="utf-8">
 		<title>Camagru</title>
 		<link rel="stylesheet" href="../public/css/signup.css" type="text/css"/>
+		<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
 	</head>
 
 	<!-- 可见的页面内容 -->
@@ -27,10 +28,13 @@
 	
 						<p>entre your Email</p>
 						<p><input id='email' type="test" value="email"></p>
-
-						<p>entre your PassWord(5~15size, a~z, A~Z, 0~9))</p>
-						<p><input id='password' type="test" value="password"></p>
 						
+						<p>entre your PassWord (5~15size, a~z, A~Z, 0~9)
+						<p><input id='password' type="password" value="password">
+						<i class="fa fa-eye" onclick="showhide()" id="eye"></i></p>
+						<p>verifier your PassWord</p>
+						<p><input id='password2' type="password" value="password">	
+						<i class="fa fa-eye" onclick="showhide2()" id="eye2"></i></p></p>
 						<button type="submit" onclick="handleSubmit(event)">submit</button>
 					</form>
 				</div>

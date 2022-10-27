@@ -129,7 +129,7 @@ router.post('/api/login',  function (req: any, res: Response) {
 				console.log('User is null');
 				return;
 			}
-			console.log("user: " + user);
+			// console.log("user: " + user);
 			const decryptPassword = decrypt(user.passWord);
 			if (decryptPassword != password) {
 				console.log("passWord wrong")
@@ -265,7 +265,7 @@ router.get('/api/profile', function (req: any, res: Response) {
 	// const authHeader = req.headers['authorization']
   	// const token = authHeader && authHeader.split(' ')[1]
 	const user = req.session.user;
-	console.log("come in profile API: ", user);
+	console.log("come in profile API: ");
 	if (user == null) {
 		console.log("user not find");
 		res.send(null);
@@ -450,7 +450,7 @@ router.post('/api/like',  function (req: any, res: Response) {
 });
 
 //post /api/unlike
-router.post('/api/unlike',  function (req: any, res: Response) {
+router.post('/api/unlike', async function (req: any, res: Response) {
 
 	const imgId = req.body.imgId;
 	console.log("come in unlike API: ", imgId);
@@ -464,7 +464,7 @@ router.post('/api/unlike',  function (req: any, res: Response) {
 			return ;
 		}
 		const username = user.userName;
-		userDB.subLike(username, imgId);
+		await userDB.subLike(username, imgId);
 		res.send({
 			'unlike': true,
 		});
@@ -476,11 +476,11 @@ router.post('/api/unlike',  function (req: any, res: Response) {
 
 
 //get /api/likenum
-router.post('/api/likenum',  function (req: any, res: Response) {	
+router.post('/api/likenum',  async function (req: any, res: Response) {	
 	const imgId = req.body.imgId;
 	// console.log("come in likenum API: ");
 	try {
-		const num = userDB.getLikeNum(imgId).then((num: any) => {
+		const num = await userDB.getLikeNum(imgId).then((num: any) => {
 			res.send({
 				'like': num,
 			});
@@ -507,14 +507,17 @@ router.post('/api/addcomment',   async function (req: any, res: Response) {
 			return ;
 		}
 		const username = user.userName;
-		userDB.addComment(imgId, commentinfo);
+		await userDB.addComment(imgId, commentinfo);
 		res.send({
 			'addcomment': true,
 		});
-		await userDB.getUserEmail(imgId).then((email: any) => {
+		const email:any= await userDB.getUserEmail(imgId).then((email: any) => {
+			if (email == null) {
+				console.log("user not find or user not notification");
+				return ;
+			}
 			const test: string = "some one comment your photo: " + commentinfo;
-			sendMail(email, test);
-			
+			sendMail(email, test);	
 		});
 	}	catch (error){
 		console.log(error);
@@ -535,5 +538,54 @@ router.post('/api/getcomments',  async function (req: any, res: Response) {
 		console.log(error);
 		return ;
 	}
+});
+
+router.post('/api/getnotification',  async function (req: any, res: Response) {
+	try {
+		const user = req.session.user;
+		if (user == null) {
+			console.log("user not find");
+			res.send({
+				'user': false,
+			});
+			return ;
+		}
+		const username = user.userName;
+		const notifications = await userDB.getNotification(username).then((notifications: any) => {
+			console.log("API get notifications: ", notifications);
+			res.send({
+				'notifications': notifications,
+			});
+		});
+	}	catch (error) {
+		console.log(error);
+		return ;
+	}
+});
+
+router.post('/api/updatenotification',  async function (req: any, res: Response) {
+	const notification = req.body.notification;
+	console.log("come in notification API: ", notification);
+
+	try {
+		const user = req.session.user;
+		if (user == null) {
+			console.log("user not find");
+			res.send({
+				'user': false,
+			});
+			return ;
+		}
+		const username = user.userName;
+	
+	await userDB.updateNotification(username, notification);
+	res.send({
+		'updatenotifications': true,
+	});
+	}	catch (error) {
+		console.log(error);
+		return ;
+	}
+	
 });
 

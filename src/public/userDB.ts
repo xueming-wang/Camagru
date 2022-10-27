@@ -177,7 +177,7 @@ export async function LikeUserExit (username:any, imgid:any) {
 
 // /* add lick */
 export  async function addLike(username:any , imgid: any) {
-	console.log("addLike database: ", username, "+" , imgid);
+	// console.log("addLike database: ", username, "+" , imgid);
 	var whereuser = {"imgs._id": imgid};
 	// console.log('data: username: ', username);
 	//like +1
@@ -255,6 +255,10 @@ export async function getUserEmail(imgId:any) {
 		console.log('getUserEmail is null');
 		return null;
 	}
+	if (user.notification == false) {
+		console.log("user not notification: ", user.notification);
+		return null;
+	}
 	console.log("user.email", user.email);
 	return user.email;
 }
@@ -269,12 +273,40 @@ export async function getCommentByImgId(imgId:any) {
 	}
 	for(const i of user.imgs) {
 		if (i._id == imgId) {
-			console.log("i.comment??????", i.comment);
+			// console.log("i.comment??????", i.comment);
 			return i.comment;
 		}
 	}
 	return null;
 }
 
+export async function getNotification(username:any) {
+	const user:any = await userModel.findOne({'userName': username}).exec();
+	if (!user) {
+		console.log('getNotification is null');
+		return null;
+	}
+	console.log("user.notification", user.notification);
+	return user.notification;
+}
+
+// /* update notification */
+export async function updateNotification(username:any, notification:any) {
+	const whereuser = { 'userName': username };
+	console.log("updateNotification: ", username, notification);
+	if (notification == 'on') {
+		var update = { $set: {'notification': true} };
+	}
+	else {
+		var update = { $set: {'notification': false} };
+	}
+	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		console.log('updateNotification succuess');
+	})
+}
 
 

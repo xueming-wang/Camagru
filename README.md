@@ -1,4 +1,12 @@
 # Camagru
+profile收到邮件提醒
+邮箱验证才能实施下一步
+忘记密码从新定义密码密码是***
+montage 可叠加图片 显示拍好和已经上传的照片 可以删除图片 上传图片乱码
+cookie确认
+
+
+
 Common 
 • a decent page layout (meaning at least a header, a main section and a footer), be able to display correctly on mobile devices and have an adapted layout on small resolutions.
 • All your forms should have correct validations and the whole site should be secured.

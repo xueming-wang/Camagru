@@ -30,19 +30,21 @@
 
 					<p>your Email</p>
 					<p class="profile" id='email'></p>
+					<p>notification
+						<button id="notification" onclick="handleNotification(event)">OFF</button>
+					</p>
 					<a href="javascript:void(0)"  font-size="large" onclick="document.getElementById('edit_page').style.display='block'">edit</a>
 				</div>
 				<div id="edit_page" class="editPage">
-					<form  id='signup-form' class="formule" action="" formenctype="multipart/form-data">
+					<form  id='edit-form' class="formule" action="" formenctype="multipart/form-data">
 						<p>new username</p>
 						<p><input id='newuserName' type="test" value=""></p>
 						<p>new Email</p>
 						<p><input id='newEmail' type="test" value=""></p>
 						<p>new PassWord</p>
 						<p><input id='newpassWord' type="test" value=""></p>
-						<p>notification</p>
-						<p><input id='notification' type="checkbox" value=""></p>
-						<button type="submit" onclick="handleEdit(event)">submit</button>
+						<p><button type="submit" onclick="handleEdit(event)">submit</button></p>
+						
 					</form>
 				</div>
 			</main>
