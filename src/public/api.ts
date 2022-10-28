@@ -5,7 +5,7 @@ import { sendMail } from "./service/mail_serv";
 import { encrypt, decrypt } from "./service/encrypt_serv";
 import { usernameConfimation, passwordConfirmation, isEmail } from "./service/auth_serv";
 import { authMiddlewere } from "./service/auth_serv";
-import { isNonNullChain } from "typescript";
+
 
 
 export const router: Router = express.Router();
@@ -34,21 +34,23 @@ router.get('/login', function(_req: Request, res: Response) {
 	console.log("GET登陆页面");
 })
 
-router.get('/montage', function (_req: Request, res: Response) {
+router.get('/montage', authMiddlewere, function (_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/montagePage.html");
 	console.log("照相页面");
 });
 
-router.get('/profile', function (_req: Request, res: Response) {
+router.get('/profile',  authMiddlewere, function (_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/profilPage.html");
 	console.log("个人信息页面"); 
 });
 
 router.get('/sendmail', function (_req: Request, res: Response) {
-	res.sendFile(__dirname + "/views/emailPage.html");
-	console.log("个人信息页面"); 
+	res.sendFile(__dirname + "/views/emailPage.html"); 
 });
 
+router.get('/initpwd', function (_req: Request, res: Response) {
+	res.sendFile(__dirname + "/views/initpwdPage.html");
+});
 ///User:create new user  
 router.post('/api/createNewUser',  function (req: Request,res: Response) {
 	const username = req.body.username;
@@ -85,7 +87,7 @@ router.post('/api/createNewUser',  function (req: Request,res: Response) {
 });
 
 //email verify
-router.get('/api/verify',  function (req: Request, res: Response) {
+router.get('/api/verify',  authMiddlewere, function (req: Request, res: Response) {
 	// console.log("come in verify api");
 	//get cookie 
 	var cookie = req.query.cookie; //get cookie
@@ -155,7 +157,7 @@ router.post('/api/login',  function (req: any, res: Response) {
 
 
 //post /api/logout
-router.post('/api/logout', function (req: any, res: Response) {
+router.post('/api/logout',authMiddlewere, function (req: any, res: Response) {
 
 	
 	console.log("in logout : req.session.id: " + req.session.id);
@@ -178,7 +180,7 @@ router.post('/api/logout', function (req: any, res: Response) {
 });
 
 //get /api/imgs
-router.get('/api/images', function (_req: any, res: Response) {
+router.get('/api/images',  function (_req: any, res: Response) {
 	console.log("come in imgs API");
 	const imgs =  userDB.getAllImgs().then((imgs: any) => {
 		res.send(imgs);
@@ -187,7 +189,7 @@ router.get('/api/images', function (_req: any, res: Response) {
 
 
 // post api/avtivemail
-router.post('/api/activemail', authMiddlewere, function (req: any, res: Response) {
+router.post('/api/activemail', authMiddlewere, async function (req: any, res: Response) {
 	// const authHeader = req.headers['authorization']
   	// const token = authHeader && authHeader.split(' ')[1]
 	console.log("come in activemail API");
@@ -199,7 +201,7 @@ router.post('/api/activemail', authMiddlewere, function (req: any, res: Response
 		return ;
 	}
 	try {
-		const user: any = userDB.findUserByName(username).then((user: any) => {
+		const user: any = await userDB.findUserByName(username).then((user: any) => {
 		if (user == null) {	
 			console.log("user not find");
 			return ;
@@ -222,7 +224,7 @@ router.post('/api/activemail', authMiddlewere, function (req: any, res: Response
 
 
 //post /api/forgetpassword
-router.post('/api/forgetpwd', function (req: any, res: Response) {
+router.post('/api/forgetpwd',function (req: any, res: Response) {
 	const email = req.body.email;
 	try {
 		const user: any = userDB.findUserByEmail(email).then((user: any) => {
@@ -231,8 +233,9 @@ router.post('/api/forgetpwd', function (req: any, res: Response) {
 			return ;
 		}
 		console.log("user find");
-		const passWord:string = decrypt(user.passWord);
-		const test:string = 'your password is: '+ passWord;
+		// const passWord:string = decrypt(user.passWord);
+		// 发送一个重新设置密码的链接
+		const test = "http://localhost:3000/api/initpwd?email=" + email;
 		sendMail(email, test);
 		res.send({
 			'forget': true,
@@ -243,6 +246,19 @@ router.post('/api/forgetpwd', function (req: any, res: Response) {
 	}
 });
 
+
+// //post /api/initpwd //初始化密码
+// router.post('/api/initpwd', async function (req: any, res: Response) {
+// 	const username = req.session.user.userName;
+// 	try {
+// 		await userDB.initPwd(username, req.body.passWord);
+// 		res.send({
+// 			'initpwd': true,
+// 		});
+// 	} catch (error) {
+// 		console.log(error);
+// 	}
+// });	
 
 //get api/auth
 router.get('/api/auth',  function (req: any, res: Response) {
@@ -261,7 +277,7 @@ router.get('/api/auth',  function (req: any, res: Response) {
 
 
 //get /api/userinfo
-router.get('/api/profile', function (req: any, res: Response) {
+router.get('/api/profile',authMiddlewere, function (req: any, res: Response) {
 	// const authHeader = req.headers['authorization']
   	// const token = authHeader && authHeader.split(' ')[1]
 	const user = req.session.user;
@@ -366,7 +382,7 @@ router.post('/api/savePhoto', authMiddlewere, function (req: any, res: Response)
 
 
 //get /api/getimg
-router.get('/api/allimgs',  function (_req: any, res: Response) {
+router.get('/api/allimgs', function (_req: any, res: Response) {
 	try {
 		const imgs =  userDB.getAllImgs().then((imgs: any) => {
 		if (imgs == null) {
@@ -392,7 +408,7 @@ router.get('/api/allimgs',  function (_req: any, res: Response) {
 
 
 //post /api/islike	
-router.post('/api/islike', function (req: any, res: Response) {
+router.post('/api/islike', authMiddlewere, function (req: any, res: Response) {
 	const imgId= req.body.imgId;
 	try {
 		const user = req.session.user;
@@ -425,7 +441,7 @@ router.post('/api/islike', function (req: any, res: Response) {
 
 
 //post /api/like
-router.post('/api/like',  function (req: any, res: Response) {
+router.post('/api/like',  authMiddlewere, function (req: any, res: Response) {
 	const imgId= req.body.imgId;
 	// console.log("come in like API: ", imgId);
 	try {
@@ -450,7 +466,7 @@ router.post('/api/like',  function (req: any, res: Response) {
 });
 
 //post /api/unlike
-router.post('/api/unlike', async function (req: any, res: Response) {
+router.post('/api/unlike', authMiddlewere, async function (req: any, res: Response) {
 
 	const imgId = req.body.imgId;
 	console.log("come in unlike API: ", imgId);
@@ -493,7 +509,7 @@ router.post('/api/likenum',  async function (req: any, res: Response) {
 
 
 //post /api/addcomment
-router.post('/api/addcomment',   async function (req: any, res: Response) {
+router.post('/api/addcomment',  authMiddlewere,  async function (req: any, res: Response) {
 	const commentinfo = req.body.comment;
 	const imgId = req.body.imgId;
 	console.log("come in addcomment API: ", commentinfo, imgId);
@@ -540,7 +556,7 @@ router.post('/api/getcomments',  async function (req: any, res: Response) {
 	}
 });
 
-router.post('/api/getnotification',  async function (req: any, res: Response) {
+router.post('/api/getnotification', authMiddlewere,  async function (req: any, res: Response) {
 	try {
 		const user = req.session.user;
 		if (user == null) {
@@ -563,7 +579,7 @@ router.post('/api/getnotification',  async function (req: any, res: Response) {
 	}
 });
 
-router.post('/api/updatenotification',  async function (req: any, res: Response) {
+router.post('/api/updatenotification', authMiddlewere, async function (req: any, res: Response) {
 	const notification = req.body.notification;
 	console.log("come in notification API: ", notification);
 
@@ -586,6 +602,26 @@ router.post('/api/updatenotification',  async function (req: any, res: Response)
 		console.log(error);
 		return ;
 	}
-	
 });
+
+/*  getActiveEmail */
+router.get('/api/:user/getActiveEmail', authMiddlewere, async function (req: any, res: Response) {
+	const user = req.params.user;
+	console.log("come in getActiveEmail API: ", user);
+
+	try {
+		const activeInfo:any = await userDB.getActiveEmail(user);
+		if (activeInfo == null) {	
+			console.log("user not find");
+			return ;
+		}
+		res.send({
+			'active': activeInfo,
+		});
+	}	catch (error) {
+		console.log(error);
+		return ;
+	}
+});
+
 

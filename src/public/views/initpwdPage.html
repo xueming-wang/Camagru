@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Camagru</title>
+		<link rel="stylesheet" href="../public/css/signup.css" type="text/css"/>
+		<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+	</head>
+
+	<!-- 可见的页面内容 -->
+	<body>
+		<div>
+			<header>
+				<div>
+					<p><a id="Gallery" href="/">INIT PWD</a></p>
+				</div>
+			</header>
+			<main>
+				<div>
+					<form  id='signup-form' class="formule" action="" formenctype="multipart/form-data">	
+						<p>entre your PassWord (5~15size, a~z, A~Z, 0~9)
+						<p><input id='password' type="password" value="password">
+						<i class="fa fa-eye" onclick="showhide()" id="eye"></i></p>
+						<p>verifier your PassWord</p>
+						<p><input id='password2' type="password" value="password">	
+						<i class="fa fa-eye" onclick="showhide2()" id="eye2"></i></p></p>
+						<button type="submit" onclick="handlePWD(event)">submit</button>
+					</form>
+				</div>
+			</main>
+			<footer>
+				This is footer.
+			</footer>
+		</div>
+	</body>
+	<script type="text/javascript" src="../../public/view_js/signup.js"></script>
+</html>

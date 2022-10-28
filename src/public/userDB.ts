@@ -68,10 +68,10 @@ export async function findUserByEmail(email:String){
 }
 
 /* active email*/
-export const UpdateActive = (username:any) => {
+export async function UpdateActive (username:any) {
 	var whereuser = { 'userName': username };
 	var updateActive = { 'active': true };
-	userModel.updateOne(whereuser, updateActive, function(err:any, _res:Response) {
+	await userModel.updateOne(whereuser, updateActive, function(err:any, _res:Response) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -80,6 +80,17 @@ export const UpdateActive = (username:any) => {
 	})
 };
 
+export async function getActiveEmail (username:any){
+	var whereuser = { 'userName': username };
+	await userModel.findOne(whereuser, function(err:any, res:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		console.log('getActiveEmail succuess');
+		return res.active;
+	})
+};
 
 // /** 8) Classic Info Update : edit userName */
 export async function UpdateUserInfo (oldusername:any, newusername:any, newpassword:any, newemail:any) {
@@ -88,7 +99,7 @@ export async function UpdateUserInfo (oldusername:any, newusername:any, newpassw
 	var update = { $set: {'userName': newusername , 'passWord': encryptPassword, 'email': newemail} };
 	
 
-	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+	await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -103,12 +114,6 @@ export async function UpdateUserInfo (oldusername:any, newusername:any, newpassw
 	return newuser;
 }
 
-//按时间排序
-function sortTime(imgsArray:any) {
-	imgsArray.sort(function (a:any, b:any) {
-		return a.time > b.time? 1: -1;
-	});
-}
 
 /* get all imgs */
 export async function getAllImgs () {
@@ -126,12 +131,22 @@ export async function getAllImgs () {
 	return allimgs;
 }
 
+/* get user imgs */
+export async function getUserImgs (username:any) {
+	const user:any = await userModel.findOne({'userName': username }).exec();
+	if (!user) {
+		console.log('getUserImgs is null');
+		return null;
+	}
+	return user.imgs;
+}
+
 // /** 9 add img, then Save **/
 export  async function addImg (username:any, img:object) {
 	//添加照片到数据库
 	var whereuser = { 'userName': username };
 	var update = { $push: {'imgs': img} };
-	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+	await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -187,7 +202,7 @@ export  async function addLike(username:any , imgid: any) {
 	}
 	else {
 		var update = { $inc: {'imgs.$.like': 1}, $push: {'imgs.$.likeUser':username} };
-		userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+		await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 			if (err) {
 				console.log(err);
 				return ;
@@ -208,7 +223,7 @@ export  async function subLike(username:any, imgid: any) {
 		console.log('likeUser no Exit, can not sub');
 		return ;
 	}
-	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+	await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -239,7 +254,7 @@ export async function addComment(imgId:any, comment:any) {
 	const whereimg = {"imgs._id": imgId};
 	const update = { $push: {'imgs.$.comment':comment} };
 	
-	userModel.updateOne(whereimg, update, function(err:any, _res:any) {
+	await userModel.updateOne(whereimg, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -300,7 +315,7 @@ export async function updateNotification(username:any, notification:any) {
 	else {
 		var update = { $set: {'notification': false} };
 	}
-	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+	await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -309,4 +324,17 @@ export async function updateNotification(username:any, notification:any) {
 	})
 }
 
+
+export async function initPwd(username:any, pwd:any) {
+	const whereuser = { 'userName': username };
+	// console.log("updatePwd: ", username, pwd);
+	var update = { $set: {'password': pwd} };
+	await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		console.log('updatePwd succuess');
+	})
+}
 

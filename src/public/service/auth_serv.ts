@@ -27,16 +27,16 @@ export function isEmail(email:any) {
 
 //middleware function for authentication 
 export function authMiddlewere(req:any , res:any, next:any) {
-//   const authHeader = req.headers['authorization'];
-//   const token = authHeader && authHeader.split(' ')[1]
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]
   if (req.session.user == null) {
-	  res.send({ 'auth': false }) 
+    return res.redirect('/login');
   }
   else {
   	next()
   }
- 
 }
+
 
 
   // front: authorisation: Bearer TOKEN
