@@ -8,6 +8,14 @@ import './public/service/auth_serv';
 //引入mongodb模块
 const mongoose = require('mongoose');
 
+if (typeof window !== 'undefined') {
+	console.log('You are on the browser')
+	// ✅ Can use window here
+  } else {
+	console.log('You are on the server')
+	// ⛔️ Don't use window here
+  }
+
 const path = require("path");
 //运行user.ts页面里所有的代码
 const Users = require('./public/userDB');

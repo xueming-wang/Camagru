@@ -1,10 +1,12 @@
 /* GET GALLERY*/	
 getImages();   //可以评论
 
-
+var index = 0;
+var pages = 0;
 async function getImages() {
 	// let galleryParent = document.getElementById("Gallery");
 	try {
+		const pages = 0;
 		const imgs = await fetch("/api/allimgs", {
 			method: "GET",
 			headers: {
@@ -12,18 +14,21 @@ async function getImages() {
 			},
 			mode: 'cors',
 			cache: 'no-cache',
-		}).then(res => res.json())
-		if (imgs) {
-			for (const img of imgs.imgs) {
-				const sortImgs = Array. from(img).sort((a, b) => {
-					return b.time - a.time;
+		}).then(res => res.json()).then(async data => {
+			if (data) { //得到所有data
+				// console.log("data:?????????? ", data);
+				const sortdata = Array.from(data).sort((file1, file2) => {
+					if (file1.time > file2.time) return 1;
+					else if (file1.time < file2.time) return -1;
+					return 0;
+				
 				});
-				// console.log("home js time sort??????????:", sortImgs);
-				for(const i of sortImgs) {
+				// console.log("sortdata:?????????? ", sortdata);
+				for(const i of sortdata) {
 					await createHtmlElement(i.imgurl, i._id);
 				}
 			}
-		}
+		})
 	} catch (error) {
 		console.log(error);
 	}
@@ -39,6 +44,7 @@ async function createHtmlElement(imgurl, imgid) {
 	
 	const galleryParent = document.getElementById("Gallery");
 
+	
 	let img = document.createElement("img");
 	img.id = imgid;
     img.src = imgurl;
@@ -58,6 +64,7 @@ async function createHtmlElement(imgurl, imgid) {
 	galleryParent.appendChild(commentInput);
 	galleryParent.appendChild(commentButton);
 	galleryParent.appendChild(Comments);
+	
 }
 
 
@@ -149,7 +156,7 @@ async function handleCommentButton(event) {
 	 comment = commentInput.value;
 	console.log("comment: ", comment);
 
-	if (comment != null) {
+	if (comment != null) {a
 		try {
 			const res = await fetch("/api/addcomment", {
 				method: "POST",
@@ -293,17 +300,28 @@ async function HandlelikeButton(event) {
 	}
 }
 
-// //评论按钮
-// function HandlecommentButton(event) {
-// 	event.preventDefault();
-// 	let commentInput = document.getElementById("commentInput");
-// 	let commentBtton = document.getElementById("commentBtton");
 
-// 	let img = document.getElementById("img");
+//下一页
+async function HandleNextPage(event) {
+	event.preventDefault();
+	let nextPage = document.getElementById("nextPage");
+
+	//aja
 
 
+	// $.ajax({type  ,success:function(result){
+	// 	$("#div1").html(result);
+	// }});
 
-// }
+}
+
+//上一页
+async function HandlePreviousPage(event) {
+	event.preventDefault();
+	let previousPage = document.getElementById("previousPage");
+}
+
+
 
 /* HANDLE LOGOUT */
 async function handleLogout(event) {

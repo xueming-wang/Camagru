@@ -2,34 +2,84 @@
 /* scripy */
 var video = document.getElementById('video');
 let MediaStreamTrack;
+let dataUrl = '';
+
+//open camera after chossen file
+function openCamera(event) {
+    event.preventDefault();
+    const value = selectFilter();
+    if (value == "") {
+        alert("please select a filter");
+        closeVideo(event);
+    } else {
+        getMedia(value);
+    }
+}
+
+//选择滤镜
+function selectFilter() {
+    let filter = document.getElementById("filter");
+    filter = filter.value;
+    let filterStyle = "";
+    switch (filter) {
+        case "none":
+            filterStyle = "";
+            break;
+        case "grayscale":
+            filterStyle = "grayscale(100%)";
+            break;
+        case "sepia":
+            filterStyle = "sepia(100%)";
+            break;
+        case "blur":
+            filterStyle = "blur(5px)";
+            break;
+        case "hue-rotate":
+            filterStyle = "hue-rotate(90deg)";
+            break;
+        case "opacity":
+            filterStyle = "opacity(50%)";
+            break;
+    }
+    return filterStyle;
+}
 
 //获得video摄像头区域
-
-function getMedia(event) {
-    event.preventDefault();
+function getMedia(value) {
+    //获得Canvas对象
     let constraints = {
-        video: {width: 500, height: 500},
-        audio: true
+        video: {
+            width: 500, 
+            height: 500,
+        },
+        audio: false,
     };
     let promise = navigator.mediaDevices.getUserMedia(constraints);
     promise.then(function (MediaStream) {
         MediaStreamTrack = MediaStream;
         video.srcObject = MediaStream;
+        video.style.filter = value;
         video.play();
-    }).catch(function (PermissionDeniedError) {
+    }).
+    catch(function (PermissionDeniedError) {
         console.log(PermissionDeniedError);
-    })
+    }); 
 }
 
 
+
+//监测滤镜改变
+function changeFilter() {
+    video.style.filter = selectFilter();
+}
+
+//Close
 function closeVideo(event){
     event.preventDefault();
     // 两种方法都可以,这个0是指constraints的对象,下标从后面开始计数
     MediaStreamTrack && MediaStreamTrack.getVideoTracks()[0].stop();
 }
 
-let dataUrl;
-//获得Canvas对象 
 //创建context对象，getContext("2d") 对象是内建的 HTML5 对象，拥有多种绘制路径、矩形、圆形、字符以及添加图像的方法。
 function takePhoto(event) {
     //获得Canvas对象
@@ -38,23 +88,28 @@ function takePhoto(event) {
     //设置Canvas的宽高为视频的宽高
     canvas.width = video.videoWidth / 3;
     canvas.height = video.videoHeight / 3;
+   
+    //添加滤镜
+    const filter = selectFilter();
+    ctx.filter = filter;  //ctx.filter (safari no support)
     //将视频画面绘制到Canvas上
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    if (canvas.width == 0 || canvas.height == 0) {
+        alert("please open camera");
+        return ;
+    } 
     //将Canvas内的信息导出为png格式的图片数据
     dataUrl = canvas.toDataURL('image/png');
     return dataUrl;
 }
 
 
-//保存照片
+//保存照片  ??????save 之后视频关闭
 async function savePhoto(event) {
     event.preventDefault();
 
-    // const dataUrl = takePhoto(event);
-    console.log("dataUrl: ????????? ", dataUrl);
-    // let time = new Date().getTime();
     //保存照片到数据库
-    if (dataUrl == null) {
+    if (dataUrl == '') {
         alert("please take a photo first");
         return;
     }
@@ -63,10 +118,9 @@ async function savePhoto(event) {
         "time": new Date().getTime(),
         "like": 0,
     }
-
-    dataUrl = null;
+    dataUrl = '';
     try {
-       const res = fetch("/api/savePhoto", {
+       const res = await fetch("/api/savePhoto", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -75,8 +129,7 @@ async function savePhoto(event) {
             mode: 'cors',
             cache: 'no-cache',
         }).then(res => res.json()).then(data => {
-            console.log(data);
-            if (data) {
+            if (data['save'] == true) {
                 alert("save success");
             }
         }
@@ -92,21 +145,16 @@ function annulePhoto(event) {
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    dataUrl = '';
 }
 
 /* telecharger phpto*/
 function changepicture(obj) {
-    //console.log(obj.files[0]);//这里可以获取上传文件的name
     var newsrc = getObjectURL(obj.files[0])
     document.getElementById('show').src = newsrc
 }
 
-// **blob to dataURL**
-// function blobToDataURL(blob, callback) {
-//     var a = new FileReader();
-//     a.onload = function(e) {callback(e.target.result);}
-//     a.readAsDataURL(blob);
-// }
+
 
 function getObjectURL(file) {
     var url = null;
@@ -121,13 +169,10 @@ function getObjectURL(file) {
     return url;
 }
 
-function savePicture(event) {
+async function savePicture(event) {
     event.preventDefault();
 
     var imgurl = document.getElementById('show').src;
-    // newdata = blobToDataURL(imgurl);
-    console.log(imgurl);
-
     //保存照片到数据库
     let photo = {
         "imgurl":imgurl,
@@ -136,7 +181,7 @@ function savePicture(event) {
     };
 
     try {
-        const res = fetch("/api/savePhoto", {
+        const res = await fetch("/api/savePhoto", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -145,9 +190,9 @@ function savePicture(event) {
             mode: 'cors',
             cache: 'no-cache',
         }).then(res => res.json()).then(data => {
-            console.log(data);
-            if (data) {
+            if (data['save'] == true) {
                 alert("save success");
+                
             }
         }
     )
@@ -156,6 +201,14 @@ function savePicture(event) {
         console.log(error);
     }
 }
+
+//更新照片
+async function updatePages(event) {
+    event.preventDefault();
+    location.reload();
+    openCamera(event);
+}
+
 
 /* HANDLE LOGOUT */
 async function handleLogout(event) {

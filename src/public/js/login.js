@@ -42,14 +42,22 @@ try {
 async function fogetpwd(event){ 
   event.preventDefault();
 
-  var email = prompt("entre your email:","");
+  var username = prompt("entre your username");
+  console.log(username);
+  if (!username) {
+    alert('Please enter your username'); 
+  }
+
+  var email = prompt("entre your Email address");
   console.log(email);
   if(!email){ 
-      alert("email can not be empty");
+    alert("email can not be empty");
   }
+
   else{
       var emailInfo = {
           'email': email,
+          'username': username,
       };
       try {
           const res =  await fetch('/api/forgetpwd', {

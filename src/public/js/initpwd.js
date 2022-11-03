@@ -55,17 +55,22 @@ async function handlePWD(event){
 		return;
 	}
 
+	const params = new URLSearchParams(window.location.search)
+
+	console.log(params.get('username'), '\n\n')
+
 	try {
 	const response = await fetch('/api/initpwd', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({
+			'username': params.get('username'),
 			'password': password,
 		}),
 		mode: 'cors',
 	}).then(res => res.json())
 	.then(data => {
-		if (data['initpwd'] == true) {
+		if (data['init'] == true) {
 			alert('Password init successfully');
 			window.location.href = '/login';
 		}

@@ -57,13 +57,12 @@ export async function findUserByName (username:String){
 	return user;
 }
 
-export async function findUserByEmail(email:String){
-	const user:any = await userModel.findOne({'email': email }).exec();
+export async function findUser(username:String, email:String, ) {
+	const user = await userModel.findOne({'userName': username, 'email': email }).exec();
 	if (!user) {
-		console.log('find User Email is null');
-		return ;
+		console.log('username or email is not exit');
+		return null;
 	}
-	console.log('findUserByEmail exist');
 	return user;
 }
 
@@ -71,7 +70,7 @@ export async function findUserByEmail(email:String){
 export async function UpdateActive (username:any) {
 	var whereuser = { 'userName': username };
 	var updateActive = { 'active': true };
-	await userModel.updateOne(whereuser, updateActive, function(err:any, _res:Response) {
+	userModel.updateOne(whereuser, updateActive, function(err:any, _res:Response) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -99,7 +98,7 @@ export async function UpdateUserInfo (oldusername:any, newusername:any, newpassw
 	var update = { $set: {'userName': newusername , 'passWord': encryptPassword, 'email': newemail} };
 	
 
-	await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -122,22 +121,26 @@ export async function getAllImgs () {
 		console.log('getAllImgs is null');
 		return null;
 	}
-	let allimgs = [];
-	for (const u of user) {
-		// console.log("u????!!!!!!!!!!!!!", u.imgs);
-		allimgs.push(u.imgs);
-	}
-	// console.log("imgs: ??");
-	return allimgs;
+	// console.log('getAllImgs succuess', user);
+	return user;
+	// let allimgs = [];
+	// for (const u of user) {
+	// 	// console.log("u????!!!!!!!!!!!!!", u.imgs);
+	// 	allimgs.push(u.imgs);
+	// }
+	// // console.log("database imgs: ??", allimgs);
+	// return allimgs;
 }
 
 /* get user imgs */
 export async function getUserImgs (username:any) {
+	// console.log("getUserImgs username: ", username);
 	const user:any = await userModel.findOne({'userName': username }).exec();
 	if (!user) {
 		console.log('getUserImgs is null');
 		return null;
 	}
+	// console.log("get 结果 getUserImgs: ", user.imgs);
 	return user.imgs;
 }
 
@@ -146,15 +149,13 @@ export  async function addImg (username:any, img:object) {
 	//添加照片到数据库
 	var whereuser = { 'userName': username };
 	var update = { $push: {'imgs': img} };
-	await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
 		}
 		console.log('addImg succuess');
-		// console.log('userDB addimg 返回');
-		return _res;
-	})
+	});
 };
 
 export async function getLikeUser(imgid:any) {
@@ -202,7 +203,7 @@ export  async function addLike(username:any , imgid: any) {
 	}
 	else {
 		var update = { $inc: {'imgs.$.like': 1}, $push: {'imgs.$.likeUser':username} };
-		await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+		userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 			if (err) {
 				console.log(err);
 				return ;
@@ -223,7 +224,7 @@ export  async function subLike(username:any, imgid: any) {
 		console.log('likeUser no Exit, can not sub');
 		return ;
 	}
-	await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -254,7 +255,7 @@ export async function addComment(imgId:any, comment:any) {
 	const whereimg = {"imgs._id": imgId};
 	const update = { $push: {'imgs.$.comment':comment} };
 	
-	await userModel.updateOne(whereimg, update, function(err:any, _res:any) {
+	userModel.updateOne(whereimg, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -315,7 +316,7 @@ export async function updateNotification(username:any, notification:any) {
 	else {
 		var update = { $set: {'notification': false} };
 	}
-	await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -325,11 +326,12 @@ export async function updateNotification(username:any, notification:any) {
 }
 
 
-export async function initPwd(username:any, pwd:any) {
+
+export async function updatePwd(username:any, password:any) {
 	const whereuser = { 'userName': username };
-	// console.log("updatePwd: ", username, pwd);
-	var update = { $set: {'password': pwd} };
-	await userModel.updateOne(whereuser, update, function(err:any, _res:any) {
+	var update = { $set: {'passWord': password} };
+	console.log("updatePwd: ", username, password);
+	userModel.updateOne(whereuser, update, function(err:any, _res:any) {
 		if (err) {
 			console.log(err);
 			return ;
@@ -338,3 +340,16 @@ export async function initPwd(username:any, pwd:any) {
 	})
 }
 
+
+export async function deleteImg(imgId:any) {
+	const whereimg = {"imgs._id": imgId};
+	//删除图片
+	const update = { $pull: {'imgs': {'_id': imgId}} };
+	userModel.updateOne(whereimg, update, function(err:any, _res:any) {
+		if (err) {
+			console.log(err);
+			return ;
+		}
+		console.log('deleteImg succuess');
+	})
+}

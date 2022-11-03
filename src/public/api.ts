@@ -48,7 +48,7 @@ router.get('/sendmail', function (_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/emailPage.html"); 
 });
 
-router.get('/initpwd', function (_req: Request, res: Response) {
+router.get('/api/initpwd', function (_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/initpwdPage.html");
 });
 ///User:create new user  
@@ -190,8 +190,6 @@ router.get('/api/images',  function (_req: any, res: Response) {
 
 // post api/avtivemail
 router.post('/api/activemail', authMiddlewere, async function (req: any, res: Response) {
-	// const authHeader = req.headers['authorization']
-  	// const token = authHeader && authHeader.split(' ')[1]
 	console.log("come in activemail API");
 	const email = req.body.email;
 	const username = req.session.user.userName;
@@ -226,16 +224,19 @@ router.post('/api/activemail', authMiddlewere, async function (req: any, res: Re
 //post /api/forgetpassword
 router.post('/api/forgetpwd',function (req: any, res: Response) {
 	const email = req.body.email;
+	const username = req.body.username;
+
 	try {
-		const user: any = userDB.findUserByEmail(email).then((user: any) => {
+		const user: any = userDB.findUser(username, email).then((user: any) => {
 		if (!user) {
 			console.log("email not find");
 			return ;
 		}
 		console.log("user find");
+		const encryptname = encrypt(username);
 		// const passWord:string = decrypt(user.passWord);
 		// 发送一个重新设置密码的链接
-		const test = "http://localhost:3000/api/initpwd?email=" + email;
+		const test = "http://localhost:3000/api/initpwd?username=" + encryptname;
 		sendMail(email, test);
 		res.send({
 			'forget': true,
@@ -247,18 +248,25 @@ router.post('/api/forgetpwd',function (req: any, res: Response) {
 });
 
 
-// //post /api/initpwd //初始化密码
-// router.post('/api/initpwd', async function (req: any, res: Response) {
-// 	const username = req.session.user.userName;
-// 	try {
-// 		await userDB.initPwd(username, req.body.passWord);
-// 		res.send({
-// 			'initpwd': true,
-// 		});
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// });	
+//post /api/initpwd //初始化密
+router.post('/api/initpwd', async function (req: any, res: Response) {
+	console.log(req.body.username, '\n\n\n')
+	const decryptname = decrypt(req.body.username);
+	console.log(decryptname, '\n\n\n')
+	const repassword = req.body.password;
+	console.log("decryptname, repassword:?????? ", decryptname, "+" ,repassword);
+	const password = encrypt(repassword);
+	console.log("password: ", password);
+
+	try {
+		await userDB.updatePwd(decryptname, password);
+		res.send({
+			'init': true,
+		});
+	} catch (error) {
+		console.log(error);
+	}
+});	
 
 //get api/auth
 router.get('/api/auth',  function (req: any, res: Response) {
@@ -364,41 +372,47 @@ router.post('/api/edit', authMiddlewere, function (req: any, res: Response) {
 });
 
 //post /api/addimg
-router.post('/api/savePhoto', authMiddlewere, function (req: any, res: Response) {
+router.post('/api/savePhoto', authMiddlewere, async function (req: any, res: Response) {
 	const user = req.session.user;
 	// const userId = user._id;
 	const username = user.userName;
-	var imgInfo = req.body.photo;
+	var photo = req.body.photo;
 	// imgInfo.userId = userId;
-	userDB.addImg(username, imgInfo).then((result: any) => {
-		if (result) {
-			res.send({
-				'save': true,
-			});
-		}
-	}
-	);
+	console.log("come in savePhoto API: ", username, photo);
+	await userDB.addImg(username, photo)
+	res.send({
+		'save': true,
+	});
 });
 
 
 //get /api/getimg
-router.get('/api/allimgs', function (_req: any, res: Response) {
+router.get('/api/allimgs', async function (_req: any, res: Response) {
 	try {
-		const imgs =  userDB.getAllImgs().then((imgs: any) => {
-		if (imgs == null) {
-			console.log("imgs not find");
+		const userArray =  await userDB.getAllImgs();
+		if (userArray== null) {
+			console.log("users not find");
 			return ;
 		}
-		const sortimgs = Array.from(imgs).sort((a: any, b: any) => {
-			if (a.time < b.time) return -1;
-			if (a.time > b.time) return 1;
-			return 0;
-		});
-		// console.log("sortimgs: ", sortimgs);
+		// const sortimgs = Array.from(imgs).sort((a: any, b: any) => {
+		// 	if (a.time < b.time) return -1;
+		// 	if (a.time > b.time) return 1;
+		// 	return 0;
+		// });
+		//  console.log("sortimgs: ", sortimgs);
 		//显示 所有的图片 faux
 		// console.log("api get all imgs ");
-		res.send({'imgs': sortimgs});
-		});
+		// console.log("users>?????????: ", userArray);
+		const array :any= [];
+		// console.log("imgs API ?????????: ", userArray);
+		//数组中的数组
+		for(const i of userArray) {
+			for(const j of i.imgs) {
+				array.push(j);
+			}
+		}
+		res.send(array);
+		
 	}catch (error) {
 		console.log(error);
 		return ;
@@ -624,4 +638,50 @@ router.get('/api/:user/getActiveEmail', authMiddlewere, async function (req: any
 	}
 });
 
+
+/* user ->imgs */
+
+router.get('/api/userimgs', authMiddlewere, async function (req: any, res: Response) {
+	const user = req.session.user;
+	const username = user.userName;
+	// console.log("come in userimgs API: ", username);
+	
+	try {
+		const imgs:any = await userDB.getUserImgs(username);
+		if (imgs == null) {	
+			console.log("user not find");
+			return ;
+		}
+		// console.log("API userimgs: ", imgs);
+		res.send(imgs);
+	}	catch (error) {
+		console.log(error);
+		return ;
+	}
+});
+
+//delete /api/deleteimg
+router.delete('/api/delimg', authMiddlewere, async function (req: any, res: Response) {
+	const imgId = req.body.imgid;
+	console.log("come in deleteimg API: ", imgId);
+	
+	try {
+		const user = req.session.user;
+		if (user == null) {
+			console.log("user not find");
+			res.send({
+				'user': false,
+			});
+			return ;
+		}
+		const username = user.userName;
+		await userDB.deleteImg(imgId);
+		res.send({
+			'deleteimg': true,
+		});
+	}	catch (error) {
+		console.log(error);
+		return ;
+	}
+});
 

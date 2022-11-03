@@ -6,8 +6,7 @@
 		<meta charset="utf-8">
 		<title>Camagru</title>
 		<link rel="stylesheet" href="../public/css/home.css" type="text/css"/>
-		<script type="text/javascript">
-			
+		<script type="text/javascript" src="../../public/js/montage_imgs.js"></script>
 		</script>
 		
 	</head>
@@ -23,9 +22,22 @@
 			</header>
 			<main>
 				<div class="flex-center">
-					<input type="button" title="开启摄像头" value="开启摄像头" onclick="getMedia(event)">
+					<div>
+						<label>美颜</label>
+						<select id="filter" onchange="changeFilter(this)">
+							<option value="none">无</option>
+							<option value="blur">模糊</option>
+							<option value="grayscale">灰度</option>
+							<option value="sepia">褐色</option>
+							<option value="opacity">透明</option>
+						</select>
+					</div>
+					<input type="button" title="开启摄像头" value="开启摄像头" onclick="openCamera(event)">
 					<input type="button" title="关闭摄像头" value="关闭摄像头" onclick="closeVideo(event)">
 					<video id="video" width="500px" height="500px" autoplay="autoplay"></video>
+					<!-- 滤镜: -->
+					
+
 					<button id="snap" onclick="takePhoto(event)">take picture</button>
 					<canvas id="canvas" width="200" height="200" controls></canvas>
 					<button id="savephoto" onclick="savePhoto(event)">save</button>
@@ -40,13 +52,16 @@
 					<button value="telecharger" onclick="savePicture(event)">save photo</button>
 				</form>
 				</div>
-				<!-- createObjectURL -->
+				<!-- all imgs for user -->
+				<div id="allimgs" class="allimgs">
+				</div>
+				<button id="updatepages" onclick="updatePages(event)">update photos</button>
 			</main>
 			<footer>
 				This is footer.
 			</footer>
 		</div>
 	</body>
-	<script src="../../public/view_js/montage.js" type="text/javascript"></script>
+	<script src="../../public/js/montage.js" type="text/javascript"></script>
 
 </html>
