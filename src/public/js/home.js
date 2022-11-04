@@ -137,7 +137,7 @@ async function getLikeNum(imgid) {
 		.then(data => {
 			if (data != null) {
 				const num = data['like'];
-				likeNumber.innerHTML = num;
+				likeNumber.innerHTML = "like: " + num;
 			}
 		})
 	} catch (error) {
@@ -156,7 +156,7 @@ async function handleCommentButton(event) {
 	 comment = commentInput.value;
 	console.log("comment: ", comment);
 
-	if (comment != null) {a
+	if (comment != null) {
 		try {
 			const res = await fetch("/api/addcomment", {
 				method: "POST",

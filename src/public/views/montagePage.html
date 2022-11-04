@@ -46,16 +46,16 @@
 				<!-- show take photo -->
 				<div id="photo" class="photo">
 				<!-- telecharger la photo -->
-				<form action="" enctype="multipart/form-data"></form>
-					<input  id="file" type="file" onchange="changepicture(this)" accept="image/png, image/jpeg, image/gif, image/jpg" />
-					<img src="" id="show" width="200" />
+				<!-- <form action="" enctype="multipart/form-data"></form> -->
+					<input  id="file" type="file" width="200" height="200" onchange="changepicture()" accept="image/png, image/jpeg, image/gif, image/jpg" />
+					<img src="" id="show" width="200" height="200" alt="Image preview..." />
 					<button value="telecharger" onclick="savePicture(event)">save photo</button>
-				</form>
+				<!-- </form> -->
 				</div>
 				<!-- all imgs for user -->
 				<div id="allimgs" class="allimgs">
 				</div>
-				<button id="updatepages" onclick="updatePages(event)">update photos</button>
+				<button id="updateimgs" onclick="updatePages(event)">update photo</button>
 			</main>
 			<footer>
 				This is footer.

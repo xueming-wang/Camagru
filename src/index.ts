@@ -45,6 +45,7 @@ app.use(express.json());
 
 app.use(router);
 
+
 //静态资源目录 app.use(express.static('public')); 可以访问位于 public 目录中的文件
 app.use('/public', express.static(path.resolve(__dirname, 'public')));
 

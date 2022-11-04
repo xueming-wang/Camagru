@@ -581,10 +581,10 @@ router.post('/api/getnotification', authMiddlewere,  async function (req: any, r
 			return ;
 		}
 		const username = user.userName;
-		const notifications = await userDB.getNotification(username).then((notifications: any) => {
-			console.log("API get notifications: ", notifications);
+		const notification = await userDB.getNotification(username).then((notification: any) => {
+			console.log("API get notification: ", notification);
 			res.send({
-				'notifications': notifications,
+				'notification': notification,
 			});
 		});
 	}	catch (error) {

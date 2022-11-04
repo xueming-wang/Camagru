@@ -15,6 +15,20 @@ function isEmail(email) {
 	return reg.test(email) ? true : false;
 }
 
+var eye = document.getElementById('eye');
+var newpassword = document.getElementById('newpassWord');
+
+function showhide() {
+	if (newpassword.type=="password") {
+		newpassword.type="text";
+		eye.className="fa fa-eye-slash";
+	}
+	else{
+		newpassword.type='password';
+		eye.className='fa fa-eye'
+	}
+}
+
 
 async function handleEdit(event) {
 	console.log('edit button!!!!!!!!!!!!!!!!');
@@ -53,6 +67,8 @@ async function handleEdit(event) {
 	var newusername = document.getElementById('newuserName').value;
 	var newpassword = document.getElementById('newpassWord').value;
 	var newemail = document.getElementById('newEmail').value;
+	
+
 
 	if (!newusername && !newpassword && !newemail) {
 		alert('noting to change');

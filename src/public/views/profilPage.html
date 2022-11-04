@@ -5,9 +5,8 @@
 		<meta charset="utf-8">
 		<title>Camagru</title>
 		<link rel="stylesheet" href="../public/css/profile.css" type="text/css"/>
-		<script type="text/javascript" src="../../public/js/profile.js">	
-		</script>
-		
+		<script type="text/javascript" src="../../public/js/profile.js"></script>
+		<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
 	</head>
 
 	<!-- 可见的页面内容 -->
@@ -25,8 +24,8 @@
 					<p>your Username</p>
 					<p class="profile" id='username'></p>
 
-					<p>your PassWord </p>
-					<p class="profile" id='password'></p>
+					<!-- <p>your PassWord </p>
+					<p class="profile" id='password'></p> -->
 
 					<p>your Email</p>
 					<p class="profile" id='email'></p>
@@ -41,8 +40,11 @@
 						<p><input id='newuserName' type="test" value=""></p>
 						<p>new Email</p>
 						<p><input id='newEmail' type="test" value=""></p>
+
 						<p>new PassWord</p>
-						<p><input id='newpassWord' type="test" value=""></p>
+						<p><input id='newpassWord' type="password" >
+						<i class="fa fa-eye" onclick="showhide()" id="eye"></i></p>
+
 						<p><button type="submit" onclick="handleEdit(event)">submit</button></p>
 						
 					</form>

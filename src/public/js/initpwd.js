@@ -10,7 +10,7 @@ function passwordConfirmation(password) {
 var eye=document.getElementById("eye");
 var password=document.getElementById("password");
 
-function showhide() {
+ function showhide() {
 	if (password.type=="password") {
 		password.type="text";
 		eye.className="fa fa-eye-slash";
@@ -24,7 +24,7 @@ function showhide() {
 var eye2=document.getElementById("eye2");
 var password2=document.getElementById("password2");
 
-function showhide2() {
+ function showhide2() {
 	if (password2.type=="password") {
 		password2.type="text";
 		eye2.className="fa fa-eye-slash";

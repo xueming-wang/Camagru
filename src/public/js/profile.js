@@ -23,7 +23,6 @@ async function getUserInfo() {
 		}
 		document.getElementById("email").innerHTML = data.email;
 		document.getElementById("username").innerHTML = data.userName;
-		document.getElementById("password").innerHTML = data.passWord;
 		});
 	}catch (err) {
 		console.log(err);

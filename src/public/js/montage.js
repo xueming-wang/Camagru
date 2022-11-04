@@ -148,37 +148,76 @@ function annulePhoto(event) {
     dataUrl = '';
 }
 
+
 /* telecharger phpto*/
-function changepicture(obj) {
-    var newsrc = getObjectURL(obj.files[0])
-    document.getElementById('show').src = newsrc
+// let blob = null;
+
+// function changepicture(event) {
+//     blob = getObjectURL(obj.files[0])
+
+//     blobToBase64(blob).then(res => {
+//         dataUrl = res;
+//     })
+//     console.log('blob??????', blob);
+//     document.getElementById('show').src = blob;
+// }
+
+//会读取指定的 Blob 或 File 对象
+// function changepicture(event) {
+//     let reader = new FileReader();
+//     reader.onload = function(e) {
+//         dataUrl = e.target.result;
+//         document.getElementById('show').src = dataUrl;
+//     }
+//     reader.readAsDataURL(event.target.files[0]);
+//     console.log('reader??????', reader);
+// }
+
+// //建立一個可存取到該file的url
+// function getObjectURL(file) {
+//     var url = null;
+//     if (window.createObjectURL != undefined) { // basic
+//         url = window.createObjectURL(file);
+//     } else if (window.URL != undefined) { // mozilla(firefox)
+//         url = window.URL.createObjectURL(file);
+//     }else if (window.webkitURL != undefined) {
+//         // webkit or chrome
+//         url = window.webkitURL.createObjectURL(file)
+//     }
+//     return url;
+// }
+function changepicture() {
+  var preview = document.querySelector('img');
+  var file    = document.querySelector('input[type=file]').files[0];
+  console.log('file????????', file);
+
+  var reader  = new FileReader();
+  reader.addEventListener("load", function () {
+    preview.src = reader.result;
+  }, false);
+  if (file) {
+    reader.readAsDataURL(file);
+  }
 }
 
-
-
-function getObjectURL(file) {
-    var url = null;
-    if (window.createObjectURL != undefined) { // basic
-        url = window.createObjectURL(file);
-    } else if (window.URL != undefined) { // mozilla(firefox)
-        url = window.URL.createObjectURL(file);
-    }else if (window.webkitURL != undefined) {
-        // webkit or chrome
-        url = window.webkitURL.createObjectURL(file)
-    }
-    return url;
-}
 
 async function savePicture(event) {
     event.preventDefault();
 
-    var imgurl = document.getElementById('show').src;
+    dataUrl = document.getElementById('show').src;
+    console.log('dataUrl', dataUrl);
+
+    if (dataUrl == '') {
+        alert("please take a photo first");
+        return;
+    }
     //保存照片到数据库
     let photo = {
-        "imgurl":imgurl,
+        "imgurl": dataUrl,
         "time": new Date().getTime(),
         "like": 0,
     };
+    dataUrl = '';
 
     try {
         const res = await fetch("/api/savePhoto", {
@@ -194,12 +233,12 @@ async function savePicture(event) {
                 alert("save success");
                 
             }
-        }
-    )
+        })
     }
     catch (error) {
         console.log(error);
     }
+
 }
 
 //更新照片
