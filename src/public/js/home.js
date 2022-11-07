@@ -1,12 +1,14 @@
 /* GET GALLERY*/	
-getImages();   //可以评论
+getImages();
 
-var index = 0;
-var pages = 0;
+//创建全局变量
+let allPagesNum = 0; //总页数
+let currentPage = 1; //当前页数
+
 async function getImages() {
+
 	// let galleryParent = document.getElementById("Gallery");
 	try {
-		const pages = 0;
 		const imgs = await fetch("/api/allimgs", {
 			method: "GET",
 			headers: {
@@ -21,10 +23,28 @@ async function getImages() {
 					if (file1.time > file2.time) return 1;
 					else if (file1.time < file2.time) return -1;
 					return 0;
-				
 				});
-				// console.log("sortdata:?????????? ", sortdata);
-				for(const i of sortdata) {
+				allpages = Math.ceil(sortdata.length / 5);
+				console.log("allpages:?????????? ", allpages);//总页数
+
+				if (currentPage < 1 ) {
+					alert("已经是第一页了");
+					currentPage = 1;
+					
+				}
+				if (currentPage > allpages) {
+					alert("已经是最后一页了");
+					currentPage = allpages;
+					
+				}
+				console.log("currentPage:?????????? ", currentPage);//当前页数
+				//显示当前页数的5张图片
+				const startImg = (currentPage - 1) * 5;
+				const endImg = startImg + 5;
+				const currentImgs = sortdata.slice(startImg, endImg);
+				console.log("currentImgs:?????????? ", currentImgs);//当前页数的5张图片
+
+				for(const i of currentImgs) {
 					await createHtmlElement(i.imgurl, i._id);
 				}
 			}
@@ -32,6 +52,34 @@ async function getImages() {
 	} catch (error) {
 		console.log(error);
 	}
+}
+
+
+
+
+//下一页
+async function HandleNextPage(event) {
+	event.preventDefault();
+	currentPage += 1;
+	console.log("pages???????????", currentPage);
+	//清除当前页面的所有图片
+	let galleryParent = document.getElementById("Gallery");
+	while (galleryParent.firstChild) {
+		galleryParent.removeChild(galleryParent.firstChild);
+	}
+	getImages();
+}
+
+//上一页
+async function HandleprePage(event) {
+	event.preventDefault();
+	currentPage -= 1;
+	let galleryParent = document.getElementById("Gallery");
+	while (galleryParent.firstChild) {
+		galleryParent.removeChild(galleryParent.firstChild);
+	}
+	console.log("pages???????????", currentPage);
+	getImages();
 }
 
 
@@ -224,8 +272,7 @@ async function HandlelikeButton(event) {
 	//get img 的id 
 	let imgId = String(event.target.id).split("_")[0];
 	const likeButton = document.getElementById(`${imgId}_button`);
-	console.log("进去 handle likeButton.id:      ????????", likeButton.id);
-	// const img = document.getElementById(imgId)
+
 
 	if(likeButton.value == "like") {
 		//当前img id ok 
@@ -254,7 +301,7 @@ async function HandlelikeButton(event) {
 					likeButton.value= "unlike";
 					// likeNumber.innerHTML = data['like'];
 					console.log("likeButton.value:????????", likeButton.value);
-					location.reload();
+					// location.reload();
 				}
 			})
 		} catch (error) {
@@ -287,7 +334,7 @@ async function HandlelikeButton(event) {
 					likeButton.innerHTML = "LIKE";
 					// likeNumber.innerHTML = data['like'];
 					console.log("unlikeButton.value: !!!!!!!!!!!1", likeButton.value);
-					location.reload();
+					// location.reload();
 				}
 				else {
 					alert('unlike failed');
@@ -298,27 +345,6 @@ async function HandlelikeButton(event) {
 		}
 
 	}
-}
-
-
-//下一页
-async function HandleNextPage(event) {
-	event.preventDefault();
-	let nextPage = document.getElementById("nextPage");
-
-	//aja
-
-
-	// $.ajax({type  ,success:function(result){
-	// 	$("#div1").html(result);
-	// }});
-
-}
-
-//上一页
-async function HandlePreviousPage(event) {
-	event.preventDefault();
-	let previousPage = document.getElementById("previousPage");
 }
 
 

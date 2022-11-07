@@ -208,18 +208,17 @@ export  async function addLike(username:any , imgid: any) {
 				console.log(err);
 				return ;
 			}
-			console.log('addLikeNum succuess');
+			// console.log('addLikeNum succuess');
 		})
 	}
 };
 
 // like -1
 export  async function subLike(username:any, imgid: any) {
-	console.log("subLike database: ", username, "+" , imgid);
+	// console.log("subLike database: ", username, "+" , imgid);
 	var whereuser = {"imgs._id": imgid};
 	var update = { $inc: {'imgs.$.like': -1} , $pull: {'imgs.$.likeUser':username}};
 	const you:any =  await LikeUserExit(username, imgid);
-	console.log("有这个人吗？", you);
 	if ( await LikeUserExit(username, imgid) == false) {
 		console.log('likeUser no Exit, can not sub');
 		return ;
@@ -229,7 +228,7 @@ export  async function subLike(username:any, imgid: any) {
 			console.log(err);
 			return ;
 		}
-		console.log('minusLikeNum succuess');
+		// console.log('minusLikeNum succuess');
 	})
 };
 

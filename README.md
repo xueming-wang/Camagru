@@ -1,6 +1,6 @@
 # Camagru
 
-montage 可叠加图片 上传图片乱码
+montage  上传图片乱码
 
 
 

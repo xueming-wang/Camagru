@@ -483,7 +483,6 @@ router.post('/api/like',  authMiddlewere, function (req: any, res: Response) {
 router.post('/api/unlike', authMiddlewere, async function (req: any, res: Response) {
 
 	const imgId = req.body.imgId;
-	console.log("come in unlike API: ", imgId);
 	try {
 		const user = req.session.user;
 		if (user == null) {
@@ -508,7 +507,6 @@ router.post('/api/unlike', authMiddlewere, async function (req: any, res: Respon
 //get /api/likenum
 router.post('/api/likenum',  async function (req: any, res: Response) {	
 	const imgId = req.body.imgId;
-	// console.log("come in likenum API: ");
 	try {
 		const num = await userDB.getLikeNum(imgId).then((num: any) => {
 			res.send({
@@ -526,7 +524,6 @@ router.post('/api/likenum',  async function (req: any, res: Response) {
 router.post('/api/addcomment',  authMiddlewere,  async function (req: any, res: Response) {
 	const commentinfo = req.body.comment;
 	const imgId = req.body.imgId;
-	console.log("come in addcomment API: ", commentinfo, imgId);
 	try {
 		const user = req.session.user;
 		if (user == null) {
