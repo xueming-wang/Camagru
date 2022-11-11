@@ -47,8 +47,9 @@
 				<div id="photo" class="photo">
 				<!-- telecharger la photo -->
 				<!-- <form action="" enctype="multipart/form-data"></form> -->
-					<input  id="file" type="file" width="200" height="200" onchange="changepicture()" accept="image/png, image/jpeg, image/gif, image/jpg" />
-					<img src="" id="show" width="200" height="200" alt="Image preview..." />
+					<input type="file" accept="image/*" onchange="changepicture(event)" />		
+					<img src="" alt="" />			
+					<canvas id="canvas2" width="200" height="200" controls></canvas>
 					<button value="telecharger" onclick="savePicture(event)">save photo</button>
 				<!-- </form> -->
 				</div>

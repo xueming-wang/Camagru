@@ -100,6 +100,9 @@ function takePhoto(event) {
     } 
     //将Canvas内的信息导出为png格式的图片数据
     dataUrl = canvas.toDataURL('image/png');
+    // canvas.toBlob(function(blob) {
+    //     saveAs(blob, "photo.png");
+    // });
     return dataUrl;
 }
 
@@ -113,11 +116,13 @@ async function savePhoto(event) {
         alert("please take a photo first");
         return;
     }
+    
     let photo = {
         "imgurl":dataUrl,
         "time": new Date().getTime(),
         "like": 0,
     }
+
     dataUrl = '';
     try {
        const res = await fetch("/api/savePhoto", {
@@ -149,75 +154,92 @@ function annulePhoto(event) {
 }
 
 
+
+
 /* telecharger phpto*/
-// let blob = null;
+function changepicture(event) {
+    event.preventDefault();
 
-// function changepicture(event) {
-//     blob = getObjectURL(obj.files[0])
+    let file =  event.target.files[0];
+    console.log('file????????', file);
 
-//     blobToBase64(blob).then(res => {
-//         dataUrl = res;
-//     })
-//     console.log('blob??????', blob);
-//     document.getElementById('show').src = blob;
-// }
-
-//会读取指定的 Blob 或 File 对象
-// function changepicture(event) {
-//     let reader = new FileReader();
-//     reader.onload = function(e) {
-//         dataUrl = e.target.result;
-//         document.getElementById('show').src = dataUrl;
-//     }
-//     reader.readAsDataURL(event.target.files[0]);
-//     console.log('reader??????', reader);
-// }
-
-// //建立一個可存取到該file的url
-// function getObjectURL(file) {
-//     var url = null;
-//     if (window.createObjectURL != undefined) { // basic
-//         url = window.createObjectURL(file);
-//     } else if (window.URL != undefined) { // mozilla(firefox)
-//         url = window.URL.createObjectURL(file);
-//     }else if (window.webkitURL != undefined) {
-//         // webkit or chrome
-//         url = window.webkitURL.createObjectURL(file)
-//     }
-//     return url;
-// }
-function changepicture() {
-  var preview = document.querySelector('img');
-  var file    = document.querySelector('input[type=file]').files[0];
-  console.log('file????????', file);
-
-  var reader  = new FileReader();
-  reader.addEventListener("load", function () {
-    preview.src = reader.result;
-  }, false);
-  if (file) {
-    reader.readAsDataURL(file);
-  }
+    let reader;
+    if (file) {
+    // 创建流对象
+    reader = new FileReader()
+    reader.readAsDataURL(file)
+    }
+     // 捕获 转换完毕
+    reader.onload = function(e) {
+    // 转换后的base64就在e.target.result里面,直接放到img标签的src属性即可
+        document.querySelector('img').src = e.target.result
+    }
 }
 
 
+// canvas 压缩图片的代码
+function compress(base64, quality, mimeType) {
+    let canvas = document.createElement('canvas')
+    let img = document.createElement('img')
+    img.crossOrigin = 'anonymous'
+    return new Promise((resolve, reject) => {
+        img.src = base64
+        img.onload = () => {
+        let targetWidth, targetHeight
+        if (img.width > 50) {
+            targetWidth = 50
+            targetHeight = (img.height * 50) / img.width
+        } else {
+            targetWidth = img.width
+            targetHeight = img.height
+        }
+        canvas.width = targetWidth
+        canvas.height = targetHeight
+        let ctx = canvas.getContext('2d')
+        ctx.clearRect(0, 0, targetWidth, targetHeight) // 清除画布
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        let imageData = canvas.toDataURL(mimeType, quality / 100)
+        resolve(imageData)
+        }
+    })
+}
+
+//将 base64 转化为文件
+function dataUrlToBlob(base64, mimeType) {
+    let bytes = window.atob(base64.split(',')[1])
+    let ab = new ArrayBuffer(bytes.length)
+    let ia = new Uint8Array(ab)
+    for (let i = 0; i < bytes.length; i++) {
+        ia[i] = bytes.charCodeAt(i)
+    }
+    return new Blob([ab], { type: mimeType })
+}
+
+// 保存图片
 async function savePicture(event) {
     event.preventDefault();
 
-    dataUrl = document.getElementById('show').src;
+    dataUrl = document.querySelector('img').src;
     console.log('dataUrl', dataUrl);
 
     if (dataUrl == '') {
         alert("please take a photo first");
         return;
     }
+    compress(dataUrl, 0.8);
+   
+    const blob = dataUrlToBlob(dataUrl, 'image/png');
+    console.log("blob??????????????", blob);
+
+    // dataUrl = blob;
+ 
     //保存照片到数据库
     let photo = {
-        "imgurl": dataUrl,
+        "imgurl": blob,
         "time": new Date().getTime(),
         "like": 0,
     };
-    dataUrl = '';
+    // dataUrl = '';
 
     try {
         const res = await fetch("/api/savePhoto", {
@@ -228,7 +250,7 @@ async function savePicture(event) {
             body: JSON.stringify({photo}),
             mode: 'cors',
             cache: 'no-cache',
-        }).then(res => res.json()).then(data => {
+        }).then(data => {
             if (data['save'] == true) {
                 alert("save success");
                 
@@ -240,6 +262,10 @@ async function savePicture(event) {
     }
 
 }
+
+
+
+
 
 //更新照片
 async function updatePages(event) {

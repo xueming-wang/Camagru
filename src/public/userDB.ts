@@ -26,7 +26,7 @@ User.add({'imgs': [Img]});
 // //user model
 export const userModel = mongoose.model('user', User)
 export const imgsModel = mongoose.model('imgs', Img);
-//export const imgsModel = mongoose.model('imgs', Imgs)
+
 
 // /** 3) Create and Save a Person */
 export function  createUserToDB(username: string, password: string, email: string) {
@@ -121,15 +121,7 @@ export async function getAllImgs () {
 		console.log('getAllImgs is null');
 		return null;
 	}
-	// console.log('getAllImgs succuess', user);
 	return user;
-	// let allimgs = [];
-	// for (const u of user) {
-	// 	// console.log("u????!!!!!!!!!!!!!", u.imgs);
-	// 	allimgs.push(u.imgs);
-	// }
-	// // console.log("database imgs: ??", allimgs);
-	// return allimgs;
 }
 
 /* get user imgs */
@@ -259,7 +251,7 @@ export async function addComment(imgId:any, comment:any) {
 			console.log(err);
 			return ;
 		}
-		console.log('addComment succuess');
+		// console.log('addComment succuess');
 	})
 };
 
@@ -288,7 +280,7 @@ export async function getCommentByImgId(imgId:any) {
 	}
 	for(const i of user.imgs) {
 		if (i._id == imgId) {
-			// console.log("i.comment??????", i.comment);
+			
 			return i.comment;
 		}
 	}

@@ -16,32 +16,26 @@ router.use(express.json());
 //一个请求和一个响应对象作为参数
 router.get('/', function(_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/homePage.html");
-	console.log("GET 首页")
 });
 
 router.get('/home', function (_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/homePage.html");	
-	console.log("GET 首页")
 });
 
 router.get('/signup', function(_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/signupPage.html");
-	console.log("GET注册页面");
 });
 
 router.get('/login', function(_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/loginPage.html");
-	console.log("GET登陆页面");
 })
 
 router.get('/montage', authMiddlewere, function (_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/montagePage.html");
-	console.log("照相页面");
 });
 
 router.get('/profile',  authMiddlewere, function (_req: Request, res: Response) {
 	res.sendFile(__dirname + "/views/profilPage.html");
-	console.log("个人信息页面"); 
 });
 
 router.get('/sendmail', function (_req: Request, res: Response) {
@@ -89,7 +83,6 @@ router.post('/api/createNewUser',  function (req: Request,res: Response) {
 //email verify
 router.get('/api/verify',  authMiddlewere, function (req: Request, res: Response) {
 	// console.log("come in verify api");
-	//get cookie 
 	var cookie = req.query.cookie; //get cookie
 	console.log(cookie);
 	if (cookie == null) {
@@ -115,8 +108,7 @@ router.get('/api/verify',  authMiddlewere, function (req: Request, res: Response
 
 //post /api/login
 router.post('/api/login',  function (req: any, res: Response) {
-	// console.log("come in~ login API ~~~~~~~~~~~~~~~~~~~~~~~");
-	//确认后端的账号格式!!!!!!!!
+	
 	const username = req.body.userName;
 	const password = req.body.passWord;
 	console.log(username + " 取得 " + password);
@@ -139,11 +131,6 @@ router.post('/api/login',  function (req: any, res: Response) {
 			}
 			console.log("logoin success!!");
 			req.session.user = user;
-			//set sessionid
-			// console.log("req.session.user: " + req.session.user);
-			//same sessionid
-			// console.log("req.sessionID: " + req.sessionID);
-			// console.log("req.session.id: " + req.session.id);
 
 			res.send({
 				'login': true,
@@ -162,15 +149,12 @@ router.post('/api/logout',authMiddlewere, function (req: any, res: Response) {
 	
 	console.log("in logout : req.session.id: " + req.session.id);
 	console.log("in logout : req.sessionID: " + req.sessionID);
-	// console.log("in logout : req.session.user: " + req.session.user);
+	
 	req.session.destroy((err:any) => {	
 		if (err) {
 			console.log(err);
 			return ;
 		}
-		//删除了req.session.id 和 req.session.user
-		// console.log("in logout : sessionId: " + req.session.id);
-		// console.log("in logout : req.session.user: " + req.session.user);
 		console.log("in logout : req.sessionID: " + req.sessionID);
 		res.send ({
 			'logout': true,
@@ -234,7 +218,7 @@ router.post('/api/forgetpwd',function (req: any, res: Response) {
 		}
 		console.log("user find");
 		const encryptname = encrypt(username);
-		// const passWord:string = decrypt(user.passWord);
+	;
 		// 发送一个重新设置密码的链接
 		const test = "http://localhost:3000/api/initpwd?username=" + encryptname;
 		sendMail(email, test);
@@ -286,8 +270,7 @@ router.get('/api/auth',  function (req: any, res: Response) {
 
 //get /api/userinfo
 router.get('/api/profile',authMiddlewere, function (req: any, res: Response) {
-	// const authHeader = req.headers['authorization']
-  	// const token = authHeader && authHeader.split(' ')[1]
+	
 	const user = req.session.user;
 	console.log("come in profile API: ");
 	if (user == null) {
@@ -374,11 +357,9 @@ router.post('/api/edit', authMiddlewere, function (req: any, res: Response) {
 //post /api/addimg
 router.post('/api/savePhoto', authMiddlewere, async function (req: any, res: Response) {
 	const user = req.session.user;
-	// const userId = user._id;
 	const username = user.userName;
 	var photo = req.body.photo;
-	// imgInfo.userId = userId;
-	console.log("come in savePhoto API: ", username, photo);
+	// console.log("come in savePhoto API: ", username, photo);
 	await userDB.addImg(username, photo)
 	res.send({
 		'save': true,
@@ -394,18 +375,8 @@ router.get('/api/allimgs', async function (_req: any, res: Response) {
 			console.log("users not find");
 			return ;
 		}
-		// const sortimgs = Array.from(imgs).sort((a: any, b: any) => {
-		// 	if (a.time < b.time) return -1;
-		// 	if (a.time > b.time) return 1;
-		// 	return 0;
-		// });
-		//  console.log("sortimgs: ", sortimgs);
-		//显示 所有的图片 faux
-		// console.log("api get all imgs ");
-		// console.log("users>?????????: ", userArray);
 		const array :any= [];
 		// console.log("imgs API ?????????: ", userArray);
-		//数组中的数组
 		for(const i of userArray) {
 			for(const j of i.imgs) {
 				array.push(j);
@@ -540,7 +511,7 @@ router.post('/api/addcomment',  authMiddlewere,  async function (req: any, res: 
 		});
 		const email:any= await userDB.getUserEmail(imgId).then((email: any) => {
 			if (email == null) {
-				console.log("user not find or user not notification");
+				// console.log("user not find or user not notification");
 				return ;
 			}
 			const test: string = "some one comment your photo: " + commentinfo;
@@ -592,7 +563,7 @@ router.post('/api/getnotification', authMiddlewere,  async function (req: any, r
 
 router.post('/api/updatenotification', authMiddlewere, async function (req: any, res: Response) {
 	const notification = req.body.notification;
-	console.log("come in notification API: ", notification);
+	// console.log("come in notification API: ", notification);
 
 	try {
 		const user = req.session.user;
