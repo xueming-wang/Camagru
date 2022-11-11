@@ -27,6 +27,7 @@ async function getAllImgsByUser() {
 //创建html图片
 function creatImgsElement(imgurl, imgid) {
 
+	let divImg = document.createElement("p");
 	let img = document.createElement("img");
 	img.id =`${imgid}_show`;
 	img.src = imgurl;
@@ -36,8 +37,9 @@ function creatImgsElement(imgurl, imgid) {
 	delbutton.id = `${imgid}_del`;
 	delbutton.onclick = handleDelButton;
 
-	document.getElementById('allimgs').appendChild(img);
-	document.getElementById('allimgs').appendChild(delbutton);
+	document.getElementById('allimgs').appendChild(divImg);
+	divImg.appendChild(img);
+	divImg.appendChild(delbutton);
 }
 
 getAllImgsByUser();

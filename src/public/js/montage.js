@@ -49,8 +49,8 @@ function getMedia(value) {
     //获得Canvas对象
     let constraints = {
         video: {
-            width: 500, 
-            height: 500,
+            width: 200, 
+            height: 200,
         },
         audio: false,
     };
@@ -86,8 +86,8 @@ function takePhoto(event) {
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext('2d');
     //设置Canvas的宽高为视频的宽高
-    canvas.width = video.videoWidth / 3;
-    canvas.height = video.videoHeight / 3;
+    canvas.width = video.videoWidth / 2;
+    canvas.height = video.videoHeight / 2;
    
     //添加滤镜
     const filter = selectFilter();

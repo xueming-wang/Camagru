@@ -5,7 +5,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Camagru</title>
-		<link rel="stylesheet" href="../public/css/home.css" type="text/css"/>
+		<link rel="stylesheet" href="../public/css/montage.css" type="text/css"/>
 		<script type="text/javascript" src="../../public/js/montage_imgs.js"></script>
 		</script>
 		
@@ -15,13 +15,13 @@
 	<body>
 		<div>
 			<header>
-				<div>
+				<div class="nav">
 					<p><a id="Gallery" href="/">Gallery</a></p>
 					<p><button type="button" id="logout"  onclick="handleLogout(event)" href="/home">logout</button></p>
 				</div>
 			</header>
 			<main>
-				<div class="flex-center">
+				<div class="container_left">
 					<div>
 						<label>美颜</label>
 						<select id="filter" onchange="changeFilter(this)">
@@ -36,27 +36,25 @@
 					<input type="button" title="关闭摄像头" value="关闭摄像头" onclick="closeVideo(event)">
 					<video id="video" width="500px" height="500px" autoplay="autoplay"></video>
 					<!-- 滤镜: -->
-					
-
 					<button id="snap" onclick="takePhoto(event)">take picture</button>
 					<canvas id="canvas" width="200" height="200" controls></canvas>
 					<button id="savephoto" onclick="savePhoto(event)">save</button>
 					<button id="annuler" onclick="annulePhoto(event)">annuler</button>
 				</div>
-				<!-- show take photo -->
-				<div id="photo" class="photo">
-				<!-- telecharger la photo -->
-				<!-- <form action="" enctype="multipart/form-data"></form> -->
+
+				<div id="photo" class="container_left">
 					<input type="file" accept="image/*" onchange="changepicture(event)" />		
 					<img src="" alt="" />			
 					<canvas id="canvas2" width="200" height="200" controls></canvas>
 					<button value="telecharger" onclick="savePicture(event)">save photo</button>
-				<!-- </form> -->
 				</div>
-				<!-- all imgs for user -->
-				<div id="allimgs" class="allimgs">
+				
+					<!-- all imgs for user -->
+				<div class="container_right">
+					<div id="allimgs">
+					</div>
+					<button id="updateimgs" onclick="updatePages(event)">update photo</button>
 				</div>
-				<button id="updateimgs" onclick="updatePages(event)">update photo</button>
 			</main>
 			<footer>
 				This is footer.

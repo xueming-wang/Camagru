@@ -63,7 +63,7 @@ async function HandleNextPage(event) {
 	currentPage += 1;
 	console.log("pages???????????", currentPage);
 	//清除当前页面的所有图片
-	let galleryParent = document.getElementById("Gallery");
+	let galleryParent = document.getElementById("Gallery_container");
 	while (galleryParent.firstChild) {
 		galleryParent.removeChild(galleryParent.firstChild);
 	}
@@ -74,7 +74,7 @@ async function HandleNextPage(event) {
 async function HandleprePage(event) {
 	event.preventDefault();
 	currentPage -= 1;
-	let galleryParent = document.getElementById("Gallery");
+	let galleryParent = document.getElementById("Gallery_container");
 	while (galleryParent.firstChild) {
 		galleryParent.removeChild(galleryParent.firstChild);
 	}
@@ -90,8 +90,10 @@ async function createHtmlElement(imgurl, imgid) {
 	const likeNumber = await getLikeNum(imgid)
 	const Comments = await getComments(imgid)
 	
-	const galleryParent = document.getElementById("Gallery");
+	const galleryParent = document.getElementById("Gallery_container");
 
+	const imgDiv = document.createElement("div");
+	imgDiv.className = "img_container";
 	
 	let img = document.createElement("img");
 	img.id = imgid;
@@ -106,12 +108,13 @@ async function createHtmlElement(imgurl, imgid) {
 	commentButton.innerHTML = "valide";
 	commentButton.onclick = handleCommentButton;
 
-	galleryParent.appendChild(img);
-	galleryParent.appendChild(likeButton);
-	galleryParent.appendChild(likeNumber);
-	galleryParent.appendChild(commentInput);
-	galleryParent.appendChild(commentButton);
-	galleryParent.appendChild(Comments);
+	galleryParent.appendChild(imgDiv);
+	imgDiv.appendChild(img);
+	imgDiv.appendChild(likeButton);
+	imgDiv.appendChild(likeNumber);
+	imgDiv.appendChild(commentInput);
+	imgDiv.appendChild(commentButton);
+	imgDiv.appendChild(Comments);
 	
 }
 
