@@ -12,9 +12,9 @@ async function checkLogin() {
 		credentials: 'include',
 	}).then(res => res.json())
 		.then(data => data) 
-		console.log("!!!!!!!!!!checkLogin: ", user);
+		// console.log("!!!!!!!!!!checkLogin: ", user);
 		if(user['auth'] == true){
-			console.log("login ^^^^^^^^^^^^^^^^^^^");
+			// console.log("login ^^^^^^^^^^^^^^^^^^^");
 			document.getElementById("signup").style.display = "block";
 			document.getElementById("login").style.display = "none";
 			document.getElementById("logout").style.display = "block";
@@ -23,7 +23,7 @@ async function checkLogin() {
 			document.getElementById("email").style.display = "block";
 		}
 		else {
-			console.log("no login^^^^^^^^^^^^^^^^^^^");
+			// console.log("no login^^^^^^^^^^^^^^^^^^^");
 			document.getElementById("signup").style.display = "block";
 			document.getElementById("login").style.display = "block";
 			document.getElementById("logout").style.display = "none";

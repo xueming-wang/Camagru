@@ -25,7 +25,7 @@ async function getImages() {
 					return 0;
 				});
 				allpages = Math.ceil(sortdata.length / 5);
-				console.log("allpages:?????????? ", allpages);//总页数
+				// console.log("allpages:?????????? ", allpages);//总页数
 
 				if (currentPage < 1 ) {
 					alert("已经是第一页了");
@@ -37,12 +37,12 @@ async function getImages() {
 					currentPage = allpages;
 					
 				}
-				console.log("currentPage:?????????? ", currentPage);//当前页数
+				// console.log("currentPage:?????????? ", currentPage);//当前页数
 				//显示当前页数的5张图片
 				const startImg = (currentPage - 1) * 5;
 				const endImg = startImg + 5;
 				const currentImgs = sortdata.slice(startImg, endImg);
-				console.log("currentImgs:?????????? ", currentImgs);//当前页数的5张图片
+				// console.log("currentImgs:?????????? ", currentImgs);//当前页数的5张图片
 
 				for(const i of currentImgs) {
 					await createHtmlElement(i.imgurl, i._id);

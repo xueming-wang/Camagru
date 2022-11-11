@@ -186,9 +186,9 @@ function compress(base64, quality, mimeType) {
         img.src = base64
         img.onload = () => {
         let targetWidth, targetHeight
-        if (img.width > 50) {
-            targetWidth = 50
-            targetHeight = (img.height * 50) / img.width
+        if (img.width > 200) {
+            targetWidth = 200
+            targetHeight = (img.height * 200) / img.width
         } else {
             targetWidth = img.width
             targetHeight = img.height
@@ -204,16 +204,6 @@ function compress(base64, quality, mimeType) {
     })
 }
 
-//将 base64 转化为文件
-function dataUrlToBlob(base64, mimeType) {
-    let bytes = window.atob(base64.split(',')[1])
-    let ab = new ArrayBuffer(bytes.length)
-    let ia = new Uint8Array(ab)
-    for (let i = 0; i < bytes.length; i++) {
-        ia[i] = bytes.charCodeAt(i)
-    }
-    return new Blob([ab], { type: mimeType })
-}
 
 // 保存图片
 async function savePicture(event) {
@@ -226,20 +216,18 @@ async function savePicture(event) {
         alert("please take a photo first");
         return;
     }
-    compress(dataUrl, 0.8);
-   
-    const blob = dataUrlToBlob(dataUrl, 'image/png');
-    console.log("blob??????????????", blob);
+    dataUrl = await compress(dataUrl, 0.8);
+    console.log("new DATA????????????/",  dataUrl);
+    // const blob = dataUrlToBlob(dataUrl, 'image/png');
 
-    // dataUrl = blob;
  
     //保存照片到数据库
     let photo = {
-        "imgurl": blob,
+        "imgurl": dataUrl,
         "time": new Date().getTime(),
         "like": 0,
     };
-    // dataUrl = '';
+    dataUrl = '';
 
     try {
         const res = await fetch("/api/savePhoto", {
