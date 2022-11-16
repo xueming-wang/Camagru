@@ -11,7 +11,7 @@ var login = {
   'userName': username,
   'passWord': password,
 };
-console.log('in js : ' + username + ' ' + password);
+// console.log('in js : ' + username + ' ' + password);
 
 try {
     const res =  await fetch('/api/login', {
@@ -25,7 +25,7 @@ try {
       credentials: 'include',
     }).then(response => response.json())
     .then(data => {
-      console.log('Success:', data);
+      // console.log('Success:', data);
       if(data['login'] == true){
         window.location = '/home';
       }
@@ -43,13 +43,13 @@ async function fogetpwd(event){
   event.preventDefault();
 
   var username = prompt("entre your username");
-  console.log(username);
+  // console.log(username);
   if (!username) {
     alert('Please enter your username'); 
   }
 
   var email = prompt("entre your Email address");
-  console.log(email);
+  // console.log(email);
   if(!email){ 
     alert("email can not be empty");
   }
@@ -71,7 +71,7 @@ async function fogetpwd(event){
               credentials: 'include',
           }).then(response => response.json())
           .then(data => {
-              console.log('Success:', data);
+              // console.log('Success:', data);
               if(data['forget'] == true){
                   alert('send email success');
               }

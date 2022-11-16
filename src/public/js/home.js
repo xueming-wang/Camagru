@@ -61,7 +61,7 @@ async function getImages() {
 async function HandleNextPage(event) {
 	event.preventDefault();
 	currentPage += 1;
-	console.log("pages???????????", currentPage);
+	// console.log("pages???????????", currentPage);
 	//清除当前页面的所有图片
 	let galleryParent = document.getElementById("Gallery_container");
 	while (galleryParent.firstChild) {
@@ -78,7 +78,7 @@ async function HandleprePage(event) {
 	while (galleryParent.firstChild) {
 		galleryParent.removeChild(galleryParent.firstChild);
 	}
-	console.log("pages???????????", currentPage);
+	// console.log("pages???????????", currentPage);
 	getImages();
 }
 
@@ -188,7 +188,7 @@ async function getLikeNum(imgid) {
 		.then(data => {
 			if (data != null) {
 				const num = data['like'];
-				likeNumber.innerHTML = "like: " + num;
+				likeNumber.innerHTML = `LIKE:  ${num}`;
 			}
 		})
 	} catch (error) {
@@ -201,11 +201,11 @@ async function getLikeNum(imgid) {
 async function handleCommentButton(event) {
 	event.preventDefault();
 	let commentId = String(event.target.id).split("_")[0];
-	console.log("commentId: ", commentId);
+	// console.log("commentId: ", commentId);
 	let commentInput = document.getElementById(`${commentId}_comment`);
 	let comment = '';
 	 comment = commentInput.value;
-	console.log("comment: ", comment);
+	// console.log("comment: ", comment);
 
 	if (comment != null) {
 		try {
@@ -279,7 +279,7 @@ async function HandlelikeButton(event) {
 
 	if(likeButton.value == "like") {
 		//当前img id ok 
-		console.log("like button imgId:", imgId);
+		// console.log("like button imgId:", imgId);
 		try {
 			const like = await fetch("/api/like", {
 				method: "POST",
@@ -293,7 +293,7 @@ async function HandlelikeButton(event) {
 				cache: 'no-cache',
 			}).then(res => res.json())
 			.then(data => {
-				console.log("HandlelikeButton data:", data);
+				// console.log("HandlelikeButton data:", data);
 				if (data['user'] === false) {
 					alert('please login first');
 				}
@@ -303,7 +303,7 @@ async function HandlelikeButton(event) {
 					likeButton.innerHTML= "UNLIKE";
 					likeButton.value= "unlike";
 					// likeNumber.innerHTML = data['like'];
-					console.log("likeButton.value:????????", likeButton.value);
+					// console.log("likeButton.value:????????", likeButton.value);
 					// location.reload();
 				}
 			})
@@ -312,7 +312,7 @@ async function HandlelikeButton(event) {
 		}
 	}
 	else if (likeButton.value == "unlike"){
-		console.log("unlike button imgId:", imgId);
+		// console.log("unlike button imgId:", imgId);
 		try {
 			const unlike = await fetch("/api/unlike", {
 				method: "POST",
@@ -326,7 +326,7 @@ async function HandlelikeButton(event) {
 				cache: 'no-cache',
 			}).then(res => res.json())
 			.then(data => {
-				console.log("Handle unlikeButton data:", data);
+				// console.log("Handle unlikeButton data:", data);
 				if (data['user'] === false) {
 					alert('please login first');
 				}
@@ -336,7 +336,7 @@ async function HandlelikeButton(event) {
 					likeButton.value= "like";
 					likeButton.innerHTML = "LIKE";
 					// likeNumber.innerHTML = data['like'];
-					console.log("unlikeButton.value: !!!!!!!!!!!1", likeButton.value);
+					// console.log("unlikeButton.value: !!!!!!!!!!!1", likeButton.value);
 					// location.reload();
 				}
 				else {

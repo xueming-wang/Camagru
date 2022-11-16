@@ -64,7 +64,7 @@ async function handleDelButton(e) {
 			}),
 		}).then(res => res.json()).then(data => {
 			if (data['deleteimg'] === true) { //得到所有imgs
-				console.log("删除图片成功");
+				// console.log("删除图片成功");
 				location.reload();
 			}
 		})

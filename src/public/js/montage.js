@@ -86,8 +86,8 @@ function takePhoto(event) {
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext('2d');
     //设置Canvas的宽高为视频的宽高
-    canvas.width = video.videoWidth / 2;
-    canvas.height = video.videoHeight / 2;
+    canvas.width = video.videoWidth / 1;
+    canvas.height = video.videoHeight / 1;
    
     //添加滤镜
     const filter = selectFilter();
@@ -161,7 +161,7 @@ function changepicture(event) {
     event.preventDefault();
 
     let file =  event.target.files[0];
-    console.log('file????????', file);
+    // console.log('file????????', file);
 
     let reader;
     if (file) {
@@ -210,16 +210,15 @@ async function savePicture(event) {
     event.preventDefault();
 
     dataUrl = document.querySelector('img').src;
-    console.log('dataUrl', dataUrl);
+    // console.log('dataUrl', dataUrl);
 
     if (dataUrl == '') {
         alert("please take a photo first");
         return;
     }
     dataUrl = await compress(dataUrl, 0.8);
-    console.log("new DATA????????????/",  dataUrl);
-    // const blob = dataUrlToBlob(dataUrl, 'image/png');
-
+    // console.log("new DATA????????????/",  dataUrl);
+ 
  
     //保存照片到数据库
     let photo = {

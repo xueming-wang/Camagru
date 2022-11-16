@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  build: 
+    context: . .
+  args:
+    MAIL_USER: ${MAIL_USER}
+    MAIL_PASS: ${MAIL_PASS}
+    MONGO_URL: ${MONGO_URL}
+  ports:
+    - 3000:3000
+  env_file:
+    - ./.e
+  restart: always
+
+
+ 

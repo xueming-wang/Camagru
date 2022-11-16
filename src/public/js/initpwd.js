@@ -57,7 +57,7 @@ async function handlePWD(event){
 
 	const params = new URLSearchParams(window.location.search)
 
-	console.log(params.get('username'), '\n\n')
+	// console.log(params.get('username'), '\n\n')
 
 	try {
 	const response = await fetch('/api/initpwd', {

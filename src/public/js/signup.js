@@ -48,7 +48,6 @@ function showhide2() {
 /* HANDLE SIGN UP*/ 
 async function handleSubmit(event){
 	//取消默认事件
-	console.log('sign up button!!!!!!!!!!!!!!!!');
 	event.preventDefault();
 
 	const username = document.getElementById('username').value;
@@ -95,7 +94,7 @@ async function handleSubmit(event){
 			cache: 'default',
 		}).then(res => res.json())
 		.then(data => data);
-			console.log('data: ????: ', newuser);
+			// console.log('data: ????: ', newuser);
 			if (newuser['create']= true ) {
 				// set token in cookie
 				// document.cookie = `token=${data.token}`;

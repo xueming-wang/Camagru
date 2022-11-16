@@ -5,7 +5,7 @@ getNotification();
 
 
 async function getUserInfo() {
-	console.log('get user info');
+	// console.log('get user info');
 	try {
 		const user = await fetch("/api/profile", {
 			method: "GET",
@@ -32,7 +32,7 @@ async function getUserInfo() {
 
 /*get notification*/
 async function getNotification() {
-	console.log('get notification');
+	// console.log('get notification');
 	try {
 		const notification = await fetch("/api/getnotification", {
 			method: "POST",
@@ -44,7 +44,7 @@ async function getNotification() {
 		})
 		.then(res => res.json())
 		.then(data =>  {
-			console.log('notification?????????????: ', data);
+			// console.log('notification?????????????: ', data);
 			if (data['notification'] == true) {
 				document.getElementById('notification').innerHTML = 'OFF';
 				document.getElementById('notification').value = 'on';

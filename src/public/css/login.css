@@ -1,7 +1,14 @@
 .formule {
-	color: rgb(240, 18, 51);
+	color: #cf821b;
+    font-weight: bold;
+    font-size: large;
 }
-
+.title {
+	color: #cf821b;
+    font-weight: bold;
+    font-size: xxx-large;
+	font-style: italic;
+}
 body {
 	margin: 0;
 }
@@ -16,7 +23,9 @@ header {
 	overflow: hidden;
 	border: 3px solid rgb(243, 237, 237);
 	border-radius: 15px;
-	color: antiquewhite;
+	color: #cf821b;
+    font-weight: bold;
+    font-size: large;
 }
 main {
 	background-image: url(../img/noir.gif);
@@ -30,7 +39,9 @@ main {
 	left: 0px;
 	right: 0px;
 	overflow: auto;
-	color: antiquewhite;
+	color: #cf821b;
+    font-weight: bold;
+    font-size: large;
 }
 footer {
 	background-image: url(../img/noir.gif);
@@ -46,5 +57,7 @@ footer {
 	overflow: hidden;
 	border: 3px solid rgb(240, 237, 237);
 	border-radius: 15px;
-	color: antiquewhite;
+	color: #cf821b;
+    font-weight: bold;
+    font-size: large;
 }

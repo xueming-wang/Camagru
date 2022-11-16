@@ -18,7 +18,7 @@ async function handleSendEmail(event) {
 				cache: 'no-cache',
 			}).then(res => res.json())
 			.then(data =>data);
-				console.log('Success:', response);
+				// console.log('Success:', response);
 				if(sendMail['send'] == true){
 					alert('email has been sent');
 					window.location.href = '/home'//跳转到登录页面;

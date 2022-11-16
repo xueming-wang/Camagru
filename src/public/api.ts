@@ -61,7 +61,7 @@ router.post('/api/createNewUser',  function (req: Request,res: Response) {
 	}
 	try {
 		const user:any = userDB.findUserByName(username).then((user: any) => {
-			console.log("in creat api user: " + user);
+			// console.log("in creat api user: " + user);
 			if (user) {
 				console.log("user exist");
 				return ;
@@ -84,14 +84,14 @@ router.post('/api/createNewUser',  function (req: Request,res: Response) {
 router.get('/api/verify',  authMiddlewere, function (req: Request, res: Response) {
 	// console.log("come in verify api");
 	var cookie = req.query.cookie; //get cookie
-	console.log(cookie);
+	// console.log(cookie);
 	if (cookie == null) {
 		res.send(null);
 		return ;
 	}
 	// decode
 	const username:any = decrypt(cookie);
-	console.log("decipher: " + username);
+	// console.log("decipher: " + username);
 	//find user
 	try {
 		const user:any = userDB.findUserByName(username).then((user: any) => {
@@ -111,7 +111,7 @@ router.post('/api/login',  function (req: any, res: Response) {
 	
 	const username = req.body.userName;
 	const password = req.body.passWord;
-	console.log(username + " 取得 " + password);
+	// console.log(username + " 取得 " + password);
 
 	if (!username || !password ) {
 		res.send(null)
@@ -129,7 +129,7 @@ router.post('/api/login',  function (req: any, res: Response) {
 				console.log("passWord wrong")
 				return;
 			}
-			console.log("logoin success!!");
+			// console.log("logoin success!!");
 			req.session.user = user;
 
 			res.send({
@@ -147,15 +147,15 @@ router.post('/api/login',  function (req: any, res: Response) {
 router.post('/api/logout',authMiddlewere, function (req: any, res: Response) {
 
 	
-	console.log("in logout : req.session.id: " + req.session.id);
-	console.log("in logout : req.sessionID: " + req.sessionID);
+	// console.log("in logout : req.session.id: " + req.session.id);
+	// console.log("in logout : req.sessionID: " + req.sessionID);
 	
 	req.session.destroy((err:any) => {	
 		if (err) {
 			console.log(err);
 			return ;
 		}
-		console.log("in logout : req.sessionID: " + req.sessionID);
+		// console.log("in logout : req.sessionID: " + req.sessionID);
 		res.send ({
 			'logout': true,
 		});
@@ -165,7 +165,7 @@ router.post('/api/logout',authMiddlewere, function (req: any, res: Response) {
 
 //get /api/imgs
 router.get('/api/images',  function (_req: any, res: Response) {
-	console.log("come in imgs API");
+	// console.log("come in imgs API");
 	const imgs =  userDB.getAllImgs().then((imgs: any) => {
 		res.send(imgs);
 	});
@@ -174,7 +174,7 @@ router.get('/api/images',  function (_req: any, res: Response) {
 
 // post api/avtivemail
 router.post('/api/activemail', authMiddlewere, async function (req: any, res: Response) {
-	console.log("come in activemail API");
+	// console.log("come in activemail API");
 	const email = req.body.email;
 	const username = req.session.user.userName;
 	if (isEmail(email) == false) {
@@ -192,7 +192,7 @@ router.post('/api/activemail', authMiddlewere, async function (req: any, res: Re
 			console.log("user is actived");
 			return ;
 		}
-		console.log("active emai user: ", user);
+		// console.log("active emai user: ", user);
 		const activeCookie = encrypt(user.userName);
 		sendMail(email, `http://localhost:3000/api/verify?cookie=${activeCookie}`);
 		res.send({
@@ -216,7 +216,7 @@ router.post('/api/forgetpwd',function (req: any, res: Response) {
 			console.log("email not find");
 			return ;
 		}
-		console.log("user find");
+		// console.log("user find");
 		const encryptname = encrypt(username);
 	;
 		// 发送一个重新设置密码的链接
@@ -234,13 +234,13 @@ router.post('/api/forgetpwd',function (req: any, res: Response) {
 
 //post /api/initpwd //初始化密
 router.post('/api/initpwd', async function (req: any, res: Response) {
-	console.log(req.body.username, '\n\n\n')
+	// console.log(req.body.username, '\n\n\n')
 	const decryptname = decrypt(req.body.username);
-	console.log(decryptname, '\n\n\n')
+	// console.log(decryptname, '\n\n\n')
 	const repassword = req.body.password;
-	console.log("decryptname, repassword:?????? ", decryptname, "+" ,repassword);
+	// console.log("decryptname, repassword:?????? ", decryptname, "+" ,repassword);
 	const password = encrypt(repassword);
-	console.log("password: ", password);
+	// console.log("password: ", password);
 
 	try {
 		await userDB.updatePwd(decryptname, password);
@@ -272,7 +272,7 @@ router.get('/api/auth',  function (req: any, res: Response) {
 router.get('/api/profile',authMiddlewere, function (req: any, res: Response) {
 	
 	const user = req.session.user;
-	console.log("come in profile API: ");
+	// console.log("come in profile API: ");
 	if (user == null) {
 		console.log("user not find");
 		res.send(null);
@@ -305,7 +305,7 @@ router.post('/api/edit', authMiddlewere, function (req: any, res: Response) {
 	const newemail = req.body.newemail;
 	const oldusername = req.body.oldusername;
 
-	console.log("come in edit API: ", oldusername, newusername, newpassword, newemail);
+	// console.log("come in edit API: ", oldusername, newusername, newpassword, newemail);
 
 	if (!oldusername) {
 		console.log("user not find");
@@ -334,9 +334,9 @@ router.post('/api/edit', authMiddlewere, function (req: any, res: Response) {
 			try {
 				const newUserInfo =  userDB.UpdateUserInfo(oldusername, newusername, newpassword, newemail).then((newUserInfo: any) => {
 				if (newUserInfo != null) {
-					console.log("update success newUserinfo: ",  newUserInfo);
+					// console.log("update success newUserinfo: ",  newUserInfo);
 					req.session.user = newUserInfo;
-					console.log("session: " + req.session.user + " " + req.sessionID);
+					// console.log("session: " + req.session.user + " " + req.sessionID);
 					res.send({
 						'edit': true,
 					});
@@ -550,7 +550,7 @@ router.post('/api/getnotification', authMiddlewere,  async function (req: any, r
 		}
 		const username = user.userName;
 		const notification = await userDB.getNotification(username).then((notification: any) => {
-			console.log("API get notification: ", notification);
+			// console.log("API get notification: ", notification);
 			res.send({
 				'notification': notification,
 			});
@@ -631,7 +631,7 @@ router.get('/api/userimgs', authMiddlewere, async function (req: any, res: Respo
 //delete /api/deleteimg
 router.delete('/api/delimg', authMiddlewere, async function (req: any, res: Response) {
 	const imgId = req.body.imgid;
-	console.log("come in deleteimg API: ", imgId);
+	// console.log("come in deleteimg API: ", imgId);
 	
 	try {
 		const user = req.session.user;

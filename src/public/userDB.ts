@@ -30,17 +30,17 @@ export const imgsModel = mongoose.model('imgs', Img);
 
 // /** 3) Create and Save a Person */
 export function  createUserToDB(username: string, password: string, email: string) {
-	console.log('createUserToDB!!!!!!!!!')
+	// console.log('createUserToDB!!!!!!!!!')
 	//Encrypt user password
     const encryptPassword:string =  encrypt(password);
 	const newUser = new userModel({'userName': username, 'passWord': encryptPassword, 'email': email, 'active': false, 'notification': true})
-	.save(function(err:any, newUser:any) {
+	.save(function(err:any, _newUser:any) {
   		if (err) {
 			console.log(err);
 			return ;
 		}
 		else {
-			console.log(newUser + 'saved successfully!');
+			console.log(_newUser + 'saved successfully!');
 		}
   	});
 };
@@ -159,7 +159,7 @@ export async function getLikeUser(imgid:any) {
 	const username = user.imgs;
 	for (const i of username) {
 		if (i._id == imgid) {
-			console.log("i.likeUser", i.likeUser);
+			// console.log("i.likeUser", i.likeUser);
 			return i.likeUser;
 		}
 	}
@@ -263,7 +263,7 @@ export async function getUserEmail(imgId:any) {
 		return null;
 	}
 	if (user.notification == false) {
-		console.log("user not notification: ", user.notification);
+		// console.log("user not notification: ", user.notification);
 		return null;
 	}
 	console.log("user.email", user.email);
@@ -293,14 +293,14 @@ export async function getNotification(username:any) {
 		console.log('getNotification is null');
 		return null;
 	}
-	console.log("user.notification", user.notification);
+	// console.log("user.notification", user.notification);
 	return user.notification;
 }
 
 // /* update notification */
 export async function updateNotification(username:any, notification:any) {
 	const whereuser = { 'userName': username };
-	console.log("updateNotification: ", username, notification);
+	// console.log("updateNotification: ", username, notification);
 	if (notification == 'on') {
 		var update = { $set: {'notification': true} };
 	}
@@ -312,7 +312,7 @@ export async function updateNotification(username:any, notification:any) {
 			console.log(err);
 			return ;
 		}
-		console.log('updateNotification succuess');
+		// console.log('updateNotification succuess');
 	})
 }
 

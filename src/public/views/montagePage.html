@@ -21,19 +21,20 @@
 				</div>
 			</header>
 			<main>
+				<P class="title">MONTAGE</P>
 				<div class="container_left">
 					<div>
 						<label>美颜</label>
 						<select id="filter" onchange="changeFilter(this)">
-							<option value="none">无</option>
-							<option value="blur">模糊</option>
-							<option value="grayscale">灰度</option>
-							<option value="sepia">褐色</option>
-							<option value="opacity">透明</option>
+							<option value="none">none</option>
+							<option value="blur">blur</option>
+							<option value="grayscale">grayscale</option>
+							<option value="sepia">sepia</option>
+							<option value="opacity">opacity</option>
 						</select>
 					</div>
-					<input type="button" title="开启摄像头" value="开启摄像头" onclick="openCamera(event)">
-					<input type="button" title="关闭摄像头" value="关闭摄像头" onclick="closeVideo(event)">
+					<input type="button" title="开启摄像头" value="open Camera" onclick="openCamera(event)">
+					<input type="button" title="关闭摄像头" value="close Camera" onclick="closeVideo(event)">
 					<video id="video" width="500px" height="500px" autoplay="autoplay"></video>
 					<!-- 滤镜: -->
 					<button id="snap" onclick="takePhoto(event)">take picture</button>
@@ -50,16 +51,16 @@
 				</div>
 				
 					<!-- all imgs for user -->
-				<div class="container_right">
-					<div id="allimgs">
-					</div>
-					<button id="updateimgs" onclick="updatePages(event)">update photo</button>
+				<p class="title">YOUR PICTURE</p>
+				<div id="allimgs" class="container_img">
 				</div>
+				<button class="button" id="updateimgs" onclick="updatePages(event)">update photo</button>
+			
 			</main>
-			<footer>
-				This is footer.
-			</footer>
 		</div>
+		<footer>
+			CAMAGRU - ECOLE 42 - XUWANG.
+		</footer>
 	</body>
 	<script src="../../public/js/montage.js" type="text/javascript"></script>
 

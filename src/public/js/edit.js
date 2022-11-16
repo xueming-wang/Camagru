@@ -31,7 +31,6 @@ function showhide() {
 
 
 async function handleEdit(event) {
-	console.log('edit button!!!!!!!!!!!!!!!!');
 	event.preventDefault();
 
 	var oldusername = '';
@@ -92,7 +91,7 @@ async function handleEdit(event) {
 	if (!newpassword) newpassword = oldpassword;
 	if (!newemail) newemail = oldemail;
 
-	console.log("new info: ", newusername, newpassword, newemail);
+	// console.log("new info: ", newusername, newpassword, newemail);
 
 	const userUpdate = {
 		'oldusername': oldusername,
@@ -101,7 +100,7 @@ async function handleEdit(event) {
 		'newemail': newemail
 	}
 
-	console.log(userUpdate);
+	// console.log(userUpdate);
 	try {
 		const newuser = await fetch('/api/edit', {
 			method: 'POST',
@@ -115,7 +114,7 @@ async function handleEdit(event) {
 			credentials: 'include',
 		}).then(res => res.json())
 		.then(data => {
-			console.log('data: ????: ', data);
+			// console.log('data: ????: ', data);
 			if (data['edit']= true ) {
 				alert('edit successfully');
 				location.reload();
@@ -161,11 +160,9 @@ async function handleEdit(event) {
 
 /* HANDLE NOTIFICATION */
 async function handleNotification(event) {
-	console.log('notification button!!!!!!!!!!!!!!!!');
 	event.preventDefault();
 	
 	if (notification.value == 'on') {
-		console.log('notification is on???????????');
 		try {
 			const response = await fetch("/api/updatenotification", {
 				method: "POST",
@@ -187,7 +184,6 @@ async function handleNotification(event) {
 			console.log(err);
 		}
 	} else if (notification.value == 'off') {
-		console.log('come in ?????????');
 		notification.value = 'on';
 		notification.innerHTML = 'OFF';
 		try {
