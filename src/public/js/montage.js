@@ -86,8 +86,8 @@ function takePhoto(event) {
     let canvas = document.getElementById("canvas");
     let ctx = canvas.getContext('2d');
     //设置Canvas的宽高为视频的宽高
-    canvas.width = video.videoWidth / 1;
-    canvas.height = video.videoHeight / 1;
+    canvas.width = video.videoWidth / 2;
+    canvas.height = video.videoHeight / 2;
    
     //添加滤镜
     const filter = selectFilter();

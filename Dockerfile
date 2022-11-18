@@ -1,15 +1,7 @@
-FROM node:18
+FROM node:18-alpine
 
-
-
-COPY package*.json ./
-
-RUN npm config set legacy-peer-deps true
-
-RUN npm i
-
+WORKDIR /APP
 
 COPY . .
 
-CMD ["npm", "run" ,"start:dev"]
-
+RUN npm install
