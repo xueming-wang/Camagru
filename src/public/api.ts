@@ -179,7 +179,7 @@ router.post('/api/activemail', authMiddlewere, async function (req: any, res: Re
 	const username = req.session.user.userName;
 	if (isEmail(email) == false) {
 		console.log("email format wrong");
-		res.send(null);
+	
 		return ;
 	}
 	try {

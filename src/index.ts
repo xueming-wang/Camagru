@@ -30,7 +30,12 @@ app.use(cookieParser('session_Camagru'));
 app.use(session({
 	secret: 'sessiont_Camagru',//与cookieParser中的一致
 	name: 'Camagru_xuwang',
-	cookie: {maxAge: 24 * 7 * 3600}, //7天
+	cookie: {
+		maxAge: 24 * 7 * 3600,
+		httpOnly: true,
+		secure: false,
+		sameSite: 'strict',
+	}, //7天
 	resave: true,
 	saveUninitialized:true,  //保存初始化数据
 }));

@@ -29,9 +29,6 @@ try {
       if(data['login'] == true){
         window.location = '/home';
       }
-      else{
-        alert('login failed');
-      }
     })
   } catch (error) {
     console.log(error);
