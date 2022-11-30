@@ -39,6 +39,8 @@ export function authMiddlewere(req:any , res:any, next:any) {
 
 
 
+
+
   // front: authorisation: Bearer TOKEN
   // so split with space ' '
   // => ['Bearer', 'TOKEN']

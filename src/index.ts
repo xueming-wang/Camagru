@@ -9,7 +9,7 @@ import './public/service/auth_serv';
 const mongoose = require('mongoose');
 
 if (typeof window !== 'undefined') {
-	console.log('You are on the browser')
+	console.log('You are on the browser');
 	// ✅ Can use window here
   } else {
 	console.log('You are on the server')
@@ -36,8 +36,8 @@ app.use(session({
 		secure: false,
 		sameSite: 'strict',
 	}, //7天
-	resave: true,
-	saveUninitialized:true,  //保存初始化数据
+	resave: false,
+	saveUninitialized:false,  //保存初始化数据
 }));
 
 //dotenv
