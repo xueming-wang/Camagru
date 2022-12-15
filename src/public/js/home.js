@@ -206,8 +206,10 @@ async function handleCommentButton(event) {
 	let comment = '';
 	 comment = commentInput.value;
 	// console.log("comment: ", comment);
-
-	if (comment != null) {
+	if (comment == '') {
+		alert('please input comment');
+	}
+	else {
 		try {
 			const res = await fetch("/api/addcomment", {
 				method: "POST",

@@ -273,11 +273,11 @@ router.get('/api/profile',authMiddlewere, function (req: any, res: Response) {
 	
 	const user = req.session.user;
 	// console.log("come in profile API: ");
-	if (user == null) {
-		console.log("user not find");
-		res.send(null);
-		return ;
-	}
+	// if (user == null) {
+	// 	console.log("user not find");
+	// 	res.send(null);
+	// 	return ;
+	// }
 	const username = user.userName;
 	try {
 		const userinfo: any = userDB.findUserByName(username).then((userinfo: any) => {
@@ -393,7 +393,7 @@ router.get('/api/allimgs', async function (_req: any, res: Response) {
 
 
 //post /api/islike	
-router.post('/api/islike', authMiddlewere, function (req: any, res: Response) {
+router.post('/api/islike',  function (req: any, res: Response) {
 	const imgId= req.body.imgId;
 	try {
 		const user = req.session.user;
@@ -426,7 +426,7 @@ router.post('/api/islike', authMiddlewere, function (req: any, res: Response) {
 
 
 //post /api/like
-router.post('/api/like',  authMiddlewere, function (req: any, res: Response) {
+router.post('/api/like',  function (req: any, res: Response) {
 	const imgId= req.body.imgId;
 	// console.log("come in like API: ", imgId);
 	try {
@@ -451,7 +451,7 @@ router.post('/api/like',  authMiddlewere, function (req: any, res: Response) {
 });
 
 //post /api/unlike
-router.post('/api/unlike', authMiddlewere, async function (req: any, res: Response) {
+router.post('/api/unlike',  async function (req: any, res: Response) {
 
 	const imgId = req.body.imgId;
 	try {
@@ -492,7 +492,7 @@ router.post('/api/likenum',  async function (req: any, res: Response) {
 
 
 //post /api/addcomment
-router.post('/api/addcomment',  authMiddlewere,  async function (req: any, res: Response) {
+router.post('/api/addcomment',  async function (req: any, res: Response) {
 	const commentinfo = req.body.comment;
 	const imgId = req.body.imgId;
 	try {
@@ -538,7 +538,7 @@ router.post('/api/getcomments',  async function (req: any, res: Response) {
 	}
 });
 
-router.post('/api/getnotification', authMiddlewere,  async function (req: any, res: Response) {
+router.post('/api/getnotification',   async function (req: any, res: Response) {
 	try {
 		const user = req.session.user;
 		if (user == null) {
@@ -561,7 +561,7 @@ router.post('/api/getnotification', authMiddlewere,  async function (req: any, r
 	}
 });
 
-router.post('/api/updatenotification', authMiddlewere, async function (req: any, res: Response) {
+router.post('/api/updatenotification',  async function (req: any, res: Response) {
 	const notification = req.body.notification;
 	// console.log("come in notification API: ", notification);
 
