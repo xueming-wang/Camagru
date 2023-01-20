@@ -1,13 +1,10 @@
 /* GET GALLERY*/	
 getImages();
-//?????????
-
-//encore ???
-//hahahaha master
 
 //创建全局变量
 
-//NIHAO YA 
+//wobuhaole
+
 let allPagesNum = 0; //总页数
 let currentPage = 1; //当前页数
 
