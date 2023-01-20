@@ -1,6 +1,9 @@
 /* GET GALLERY*/	
 getImages();
 
+
+//hahahaha master
+
 //创建全局变量
 
 //NIHAO YA 
