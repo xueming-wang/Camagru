@@ -3,7 +3,9 @@ getImages();
 
 //创建全局变量
 
-//NIHAO YA 
+
+
+// ...what's? 
 let allPagesNum = 0; //总页数
 let currentPage = 1; //当前页数
 
