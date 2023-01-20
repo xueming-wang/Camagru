@@ -1,6 +1,9 @@
 /* GET GALLERY*/	
 getImages();
 
+
+//hahahaha master
+
 //创建全局变量
 let allPagesNum = 0; //总页数
 let currentPage = 1; //当前页数
